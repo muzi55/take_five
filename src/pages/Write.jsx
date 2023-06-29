@@ -1,16 +1,17 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../App.css';
 import { styled } from 'styled-components';
 import { addDoc, collection, getDocs, query } from 'firebase/firestore';
-import { db } from './../firebase/firebase';
-import shortid from 'shortid';
+import { db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { auth } from '../firebase';
 
+// 스타일드 컴포넌트
+// 💚 추후에 스타일드 컴포넌트 리팩토링할 것
 export const InnerBox = styled.div`
   width: 1400px;
   margin: 120px auto;
 `;
-// console.log(db);
 const WrtiteBox = styled.form`
   overflow: hidden;
 
@@ -75,30 +76,37 @@ const WrtiteBox = styled.form`
 `;
 
 function Write() {
+  // 💚 추후에 input 부분 리팩토링할 것
+  // input value
   const navigate = useNavigate();
   const [infos, setInfos] = useState([]);
   const [company, setCompany] = useState('');
   const [motive, setMotive] = useState('');
   const [grow, setGrow] = useState('');
-  const [like, setLike] = useState('');
+  const [goodBad, setGoodBad] = useState('');
 
+  // const userEmail = auth.currentUser.email;
+
+  //유효성 검사 돔요소 접근
   const companyRef = useRef('');
   const motiveRef = useRef('');
   const growRef = useRef('');
-  const likeRef = useRef('');
+  const goodBadRef = useRef('');
 
+  // 버튼 클릭시 add
   const addInfo = async (event) => {
     event.preventDefault();
 
     const newInfo = {
-      id: shortid.generate(),
+      // email: userEmail,
+      date: new Date(),
       company,
       motive,
       grow,
-      like,
+      goodBad,
     };
 
-    // console.log(newInfo);
+    // 유효성 검사
     if (company === '') {
       alert('"본인이 지원하고자 하는 회사" 내용을 입력해주세요.');
       companyRef.current.focus();
@@ -111,29 +119,31 @@ function Write() {
       alert('"자신의 성장과정" 내용을 입력해주세요.');
       growRef.current.focus();
       return false;
-    } else if (like === '') {
+    } else if (goodBad === '') {
       alert('"자신의 장단점" 내용을 입력해주세요.');
-      likeRef.current.focus();
+      goodBadRef.current.focus();
       return false;
     } else {
       setInfos((prev) => {
         return [...infos, newInfo];
       });
+
       // Firestore에서 'todos' 컬렉션에 대한 참조 생성하기
       const collectionRef = collection(db, 'infos');
       // 'todos' 컬렉션에 newTodo 문서를 추가합니다.
       await addDoc(collectionRef, newInfo);
 
       alert('게시글 등록이 완료 되었습니다🎉');
+
+      // 렌더링 되면 input value 빈값 만들기
       setCompany('');
       setMotive('');
       setGrow('');
-      setLike('');
-      navigate('home');
+      setGoodBad('');
+
+      // 다시 list 페이지로 이동.
+      navigate('/');
     }
-    // dispatch(addTodo(newTodo));
-    // setTitle('');
-    // setTodo('');
   };
 
   return (
@@ -170,9 +180,9 @@ function Write() {
           자신의 장단점?
           <textarea
             placeholder="자신이 생각하는 자신의 장점과 단점을 입력해주세요!"
-            value={like}
-            onChange={(event) => setLike(event.target.value)}
-            ref={likeRef}
+            value={goodBad}
+            onChange={(event) => setGoodBad(event.target.value)}
+            ref={goodBadRef}
           />
         </label>
 
