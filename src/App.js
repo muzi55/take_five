@@ -1,4 +1,6 @@
-import logo from './logo.svg';
+//
+//  머지 준비 완료
+//
 import './App.css';
 import Router from './router/router';
 
