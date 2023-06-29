@@ -1,7 +1,7 @@
-import { onAuthStateChanged, updateProfile } from "firebase/auth";
-import React, { useEffect, useState } from "react";
-import { auth, storage } from "../firebase";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { onAuthStateChanged, updateProfile } from '../firebase/auth';
+import React, { useEffect, useState } from 'react';
+import { auth, storage } from '../firebase';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 function EditPage() {
   useEffect(() => {
@@ -28,7 +28,7 @@ function EditPage() {
 
   const deleteImg = () => {
     updateProfile(auth.currentUser, {
-      photoURL: "",
+      photoURL: '',
     });
   };
 

@@ -1,6 +1,3 @@
-//
-//  머지 준비 완료
-//
 import './App.css';
 import Router from './router/router';
 

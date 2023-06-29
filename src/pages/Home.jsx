@@ -1,8 +1,9 @@
-import React, {useState, useEffect } from 'react';
-import * as H from '../component/HomeStyled';
+import React, { useState, useEffect } from 'react';
+import * as H from '../style/HomeStyled';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
+import { encode } from 'url-safe-base64';
 
 function Home() {
   const [email, setEmail] = useState('');
@@ -11,7 +12,7 @@ function Home() {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
-      console.log('user', user);
+      // console.log('user', user);
     });
   }, []);
 
@@ -108,7 +109,9 @@ function Home() {
                       email,
                       password
                     );
-                    navigate('/list');
+                    const url = userCredential.user.email;
+                    navigate(`/mypage/${encode(btoa(url))}`);
+                    // navigate('/list');
                   } catch (error) {
                     console.error(error);
                   }
@@ -121,7 +124,6 @@ function Home() {
         </H.Form>
       </H.Login>
     </H.Grid>
-
   );
 }
 

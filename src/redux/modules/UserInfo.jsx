@@ -1,4 +1,4 @@
-const UPLOAD_IMG = "UPLOAD_IMG";
+const UPLOAD_IMG = 'UPLOAD_IMG';
 
 export const uploadImg = (payload) => {
   return {
