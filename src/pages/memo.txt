@@ -1,0 +1,34 @@
+import React from 'react';
+
+function mypage() {
+  return (
+    <div>
+      mypage
+      <Container>
+        <Title>마이 페이지입니다</Title>
+        <UserInfo>
+          <Id>아이디 : </Id>
+          <Value>
+            {user.userId}
+            <Line />
+          </Value>
+        </UserInfo>
+        <Link to="/mypage/modify">
+          <Btn type="submit" value="수정" />
+        </Link>
+      </Container>
+    </div>
+  );
+}
+
+<h3>프로필목록</h3>
+      {data.map((item) => {
+        return (
+          <div key={item.id}>
+            {item.id}
+            &nbsp;
+            {item.nickname}
+            <FileUploadContainer>
+              {showImage}
+
+export default mypage;
