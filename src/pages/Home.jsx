@@ -1,15 +1,23 @@
 import React from 'react';
-
-// console.log('home');
-// console.log('홈 입니다 !');
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
+  // const { user } = useUserState();
+  const navigate = useNavigate();
+
+  // useNavigate
   return (
     <div>
-      asdasdasdsd Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      Quisquam deserunt recusandae est hic laudantium repudiandae quo explicabo
-      velit! Maiores obcaecati nostrum qui laudantium dicta eaque iste debitis
-      velit aut ex?
+      <>
+        여기서부터 시작입니다 !<br />
+        <button
+          onClick={() => {
+            navigate('/Mypage');
+          }}
+        >
+          Mypage로 이동
+        </button>
+      </>
     </div>
   );
 }
