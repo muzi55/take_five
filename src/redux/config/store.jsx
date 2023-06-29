@@ -1,10 +1,9 @@
-import { createStore } from 'redux';
-import { combineReducers } from 'redux';
-import lists from '../modules/modules';
+import { createStore } from "redux";
+import { combineReducers } from "redux";
+import userInfo from "../modules/UserInfo";
+
 const rootReducer = combineReducers({
-  // 여기서 부터 추가 !!
-  lists,
-  
+  userInfo,
 });
 
 const store = createStore(rootReducer);
