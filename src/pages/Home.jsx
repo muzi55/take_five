@@ -1,4 +1,4 @@
-import React, {useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as H from '../component/HomeStyled';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
@@ -121,7 +121,6 @@ function Home() {
         </H.Form>
       </H.Login>
     </H.Grid>
-
   );
 }
 
