@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, query } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, query } from 'firebase/firestore';
 import { db } from '../firebase';
 import { InnerBox } from './Write';
 import { MyInfo, WriteBox } from '../style/DetailStyled';
@@ -9,7 +9,8 @@ import { useParams } from 'react-router-dom';
 function Detail() {
   const param = useParams();
   const paramEmail = param.email.split('&')[0];
-  console.log(paramEmail);
+  const paramId = param.email.split('&')[1];
+
   const [userInfo, setUserInfo] = useState({});
   // 데이터 읽기 -----------------------------------------------------
   useEffect(() => {
@@ -17,13 +18,13 @@ function Detail() {
       // collection 이름이 todos인 collection의 모든 document를 가져옵니다.
       const dbInfos = query(collection(db, 'infos'));
       const dbUsers = query(collection(db, 'users'));
-      //  히히히
+
       const querySnapshotInfo = await getDocs(dbInfos);
       const querySnapshotUser = await getDocs(dbUsers);
-      // 히히히
+
       const initialInfos = [];
       const initialUsers = [];
-      // 히히히
+
       // document의 id와 데이터를 initialTodos에 저장합니다.
       // doc.id의 경우 따로 지정하지 않는 한 자동으로 생성되는 id입니다.
       // doc.data()를 실행하면 해당 document의 데이터를 가져올 수 있습니다.
@@ -33,8 +34,8 @@ function Detail() {
       querySnapshotUser.forEach((doc) => {
         initialUsers.push({ id: doc.id, ...doc.data() });
       });
-      // 히히히
-      console.log(initialInfos);
+
+      // console.log(initialInfos);
       console.log(initialUsers);
 
       const filterInfo = initialInfos.filter((info) => {
@@ -44,28 +45,32 @@ function Detail() {
       });
 
       initialUsers.filter((user) => {
-        console.log(user.email);
         if (user.email === paramEmail) {
-          console.log('1');
-          setUserInfo({ ...filterInfo[0], ...user });
+          setUserInfo({ ...user, ...filterInfo[0] });
         }
       });
-
-      // querySnapshot.forEach((doc) => {
-      //   initialTodos.push({ id: doc.id, ...doc.data() });
-      // });
-
-      // firestore에서 가져온 데이터를 state에 전달
-      // setTodos(initialTodos);
     };
-
     fetchData();
   }, []);
 
-  const { company, goodbad, grow, introduce, like, motive, name, skill } =
-    userInfo;
-  //----------------------------------------------------------------------------
+  // bucket이라는 변수로 firestore의 collection인 bucket에 접근
+  //   useEffect(() => {
+  //   const bucket = firestore.collection("infos");
 
+  //   // bucket 콜렉션의 bucket_item 문서 삭제
+  //   bucket.doc(userInfo.id).delete();
+  // })
+  // console.log(userInfo.id);
+  const deleteInfo = async (event) => {
+    if (confirm('삭제하시겠습니까?')) {
+      const todoRef = doc(db, 'infos', userInfo.id);
+      await deleteDoc(todoRef);
+    }
+  };
+
+  const { company, goodBad, grow, introduce, like, motive, name, skill } =
+    userInfo;
+  console.log(userInfo);
   return (
     <InnerBox>
       {/* my page 내용 */}
@@ -106,9 +111,11 @@ function Detail() {
         </dl>
         <dl>
           <dt>자신의 장단점</dt>
-          <dd>{goodbad}</dd>
+          <dd>{goodBad}</dd>
         </dl>
       </WriteBox>
+      <button>수정</button>
+      <button onClick={deleteInfo}>삭제</button>
     </InnerBox>
   );
 }

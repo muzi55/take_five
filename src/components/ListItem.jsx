@@ -4,16 +4,21 @@ import { Link } from 'react-router-dom';
 import LikeImg from '../images/Like.svg';
 
 const ListItem = ({ lists }) => {
-  console.log(lists);
   return (
     <>
-      {/* {console.log(lists)} */}
-      {console.log(lists)}
       {lists
         ? lists.map((list, index) => {
-            const { img, name, email, company, introduce, skill, like, date } =
-              list;
-
+            const {
+              img,
+              name,
+              email,
+              company,
+              introduce,
+              skill,
+              like,
+              date,
+              id,
+            } = list;
             // Hash는 다른곳에서 받아와야합니다.
             // id 말고, 다른 대체수단이 필요할 듯 싶다. 글을 쓸 시 => 새롭게 받아오는 글 고유의 id
             // date값을 받아와서, 정렬할 수 있는 수단이 필요할 거 같다.
@@ -21,7 +26,7 @@ const ListItem = ({ lists }) => {
             return (
               // key={index} 여기 수정해야합니다.
               <StListItem key={index}>
-                <Link className="link" to={`/detail/${email}`}>
+                <Link className="link" to={`/detail/${email}&${id}`}>
                   <StLikeSpan>
                     <img src={LikeImg} alt="하트모양 이미지" /> : {like}
                   </StLikeSpan>

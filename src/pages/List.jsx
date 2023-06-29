@@ -69,8 +69,8 @@ const List = () => {
     });
     setLists(initialUsers);
     setUsers(initialInfos);
-    console.log(initialUsers);
-    console.log(initialInfos);
+    // console.log(initialUsers);
+    // console.log(initialInfos);
   };
   // console.log('lists', lists);
   // console.log('users', users);
@@ -126,7 +126,8 @@ const List = () => {
   const newarr = [];
   users.forEach((user) => {
     lists.map((list) => {
-      user.email === list.email ? newarr.push({ ...user, ...list }) : null;
+      //원래 {...user, ...list}였는데 순서 바꿈.
+      user.email === list.email ? newarr.push({ ...list, ...user }) : null;
     });
   });
 

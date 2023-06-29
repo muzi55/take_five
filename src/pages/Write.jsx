@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../App.css';
 import { styled } from 'styled-components';
-import { addDoc, collection, getDocs, query } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, query } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 
@@ -84,7 +84,7 @@ function Write() {
   const [grow, setGrow] = useState('');
   const [goodBad, setGoodBad] = useState('');
 
-  // const userEmail = auth.currentUser.email;
+  const userEmail = auth.currentUser.email;
 
   //유효성 검사 돔요소 접근
   const companyRef = useRef('');
@@ -97,7 +97,7 @@ function Write() {
     event.preventDefault();
 
     const newInfo = {
-      // email: userEmail,
+      email: userEmail,
       date: new Date(),
       company,
       motive,
