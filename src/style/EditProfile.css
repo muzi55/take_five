@@ -2,6 +2,15 @@
 
 .upload {
   text-align: center;
+  margin-top: 50px;
+}
+
+.profile_title {
+  font-size: 30px;
+}
+
+.guide_coment {
+  margin: 15px;
 }
 
 .profileImg {
@@ -9,7 +18,7 @@
   width: 120%;
   height: 120%;
   margin-left: 100px;
-  margin-top: 125px;
+  margin-top: 35px;
   border-radius: 70%;
   overflow: hidden;
   object-fit: cover;
@@ -51,22 +60,23 @@
 
 /* 사진업로드 부분 */
 .divUP {
+  margin-left: 30px;
   width: 150px;
   height: 150px;
   border: none;
   float: left;
-  margin-right: 10px;
 }
 
 /* 목록 전체 부분 */
 .editlist {
   width: 315px;
-  height: 150px;
+  height: 300px;
   border: none;
   float: right;
-  margin-right: 150px;
-  margin-top: 125px;
-  padding-left: 10px;
+  margin-right: 120px;
+  margin-top: 35px;
+  padding-left: 30px;
+  text-align: left;
 }
 
 .input::placeholder {
@@ -75,8 +85,9 @@
 
 /* 이름 부분 */
 .inputName {
-  height: 35px;
+  height: 43px;
   border: 0;
+  margin-left: 48px;
   background-color: #d9d9d9;
   text-align: center;
   outline: 0;
@@ -86,14 +97,16 @@
   height: 45px;
   width: 300px;
   margin: 5px;
+  padding-left: 10px;
   background-color: #d9d9d9;
   border-radius: 10px;
 }
 
 /* 닉네임 부분 */
 .inputNick {
-  height: 35px;
+  height: 43px;
   border: 0;
+  margin-left: 33px;
   background-color: #d9d9d9;
   text-align: center;
   outline: 0;
@@ -104,14 +117,16 @@
   width: 300px;
   margin: 5px;
   margin-top: 20px;
+  padding-left: 10px;
   background-color: #d9d9d9;
   border-radius: 10px;
 }
 
 /* 소개글 부분 */
 .inputIntro {
-  height: 35px;
+  height: 43px;
   border: 0;
+  margin-left: 33px;
   background-color: #d9d9d9;
   text-align: center;
   outline: 0;
@@ -122,14 +137,16 @@
   width: 300px;
   margin: 5px;
   margin-top: 20px;
+  padding-left: 10px;
   background-color: #d9d9d9;
   border-radius: 10px;
 }
 
 /* 스펙 부분 */
 .inputSpec {
-  height: 35px;
+  height: 43px;
   border: 0;
+  margin-left: 14px;
   background-color: #d9d9d9;
   text-align: center;
   outline: 0;
@@ -140,16 +157,18 @@
   width: 300px;
   margin: 5px;
   margin-top: 20px;
+  padding-left: 10px;
   background-color: #d9d9d9;
   border-radius: 10px;
 }
 
 .editbox {
   width: 800px;
-  height: 400px;
+  height: 350px;
   text-align: center;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 20px;
 }
 
 .finishbtn {
