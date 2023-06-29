@@ -53,6 +53,52 @@ const List = () => {
       cursor: pointer;
     }
   `;
+  // 유저 이메일로 필터
+
+  // 토글 정렬창
+  const sortItems = ['최신순', '인기순'];
+
+  const [state, setState] = useState(sortItems[0]);
+  // 중복된 값을 저지하는 함수이벤트입니다.
+  const onSetState = (e) => {
+    state === e ? (openRef.current.style.display = 'none') : setState(e);
+    changeUl.current = 'none';
+  };
+
+  // toggle 정렬입니다.
+  const changeUl = useRef('none');
+  const onClickListUl = () => {
+    // 여기서 redux 추가되야합니다.
+    if (changeUl.current === 'none') {
+      openRef.current.style.display = 'block';
+      changeUl.current = 'block';
+    } else {
+      openRef.current.style.display = 'none';
+      changeUl.current = 'none';
+    }
+  };
+
+  // 1
+
+  // user와, info를 합친 객체를 배열로 반환합니다
+  const newarr = [];
+  users.forEach((user) => {
+    lists.map((list) => {
+      user.email === list.email ? newarr.push({ ...user, ...list }) : null;
+    });
+  });
+  console.log(newarr);
+
+  // 인기순으로 정렬하는 함수입니다.
+  const popularList = [...newarr].sort((a, b) => {
+    if (a.like < b.like) return 1;
+    if (a.like > b.like) return -1;
+    return 0;
+  });
+
+  // 최신순으로 정렬되어있는 함수입니다.
+  const newestList = [...newarr].sort((a, b) => a.date - b.date);
+
   return (
     <div>
       <>
@@ -69,16 +115,20 @@ const List = () => {
         <WritingForm />
 
         <StListSection>
-          <h2>최신순</h2>
-          <StSortBox ref={openRef}>
-            <p>최신순 ▼</p>
-            <div>
-              <StListUl>
-                <li>123</li>
-                <li>123</li>
-                <li>123</li>
-              </StListUl>
-            </div>
+          <h2>{state}</h2>
+          <StSortBox>
+            <p onClick={onClickListUl}>{state || '최신순'} ▼</p>
+            <StListUl ref={openRef}>
+              {/* 최신순 인기순 정렬 입니다. */}
+              {sortItems.map((item, index) => {
+                return (
+                  <li key={index} onClick={() => onSetState(item)}>
+                    {/* <li key={item} onClick={() => dispatch()}> */}
+                    <span>{item}</span>
+                  </li>
+                );
+              })}
+            </StListUl>
           </StSortBox>
 
           <StListbox>
