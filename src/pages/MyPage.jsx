@@ -1,53 +1,69 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { styled } from "styled-components";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, db } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { decode } from "url-safe-base64";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserInfo } from "../redux/modules/UserInfo";
+import { getUserWrite } from "../redux/modules/UserWrite";
+import { getUserPhoto } from "../redux/modules/UserPhoto";
 
 function MyPage() {
   const navigate = useNavigate();
   const params = useParams();
-  const [item, setItem] = useState([]);
-  const [write, setWrite] = useState([]);
-  const user = auth.currentUser;
+  const dispatch = useDispatch();
+  const userInfo = useSelector((state) => state.userInfo);
+  const userWrite = useSelector((state) => state.userWrite);
+  const userPhoto = useSelector((state) => state.userPhoto);
   //로컬, 세션 스토리지를 이용한 새로고침 대응
 
   useEffect(() => {
     onAuthStateChanged(auth, (users) => {
-      console.log(users);
+      dispatch(getUserPhoto(users.photoURL));
     });
 
     const fetchData = async () => {
-      const dbUsers = await getDocs(collection(db, "users"));
-      const dbWrite = await getDocs(collection(db, "infos"));
+      const dbUsers = query(
+        collection(db, "users"),
+        where("email", "==", atob(decode(params.id)))
+      );
+      const dbWrite = query(
+        collection(db, "infos"),
+        where("email", "==", atob(decode(params.id)))
+      );
+
       const usersData = [];
       const writeData = [];
 
-      dbUsers.forEach((doc) => {
-        const usersId = doc.data().email;
-        if (usersId === atob(decode(params.id))) usersData.push(doc.data());
+      const userSnapshot = await getDocs(dbUsers);
+      userSnapshot.forEach((doc) => {
+        usersData.push(doc.data());
       });
-      setItem(...usersData);
+      dispatch(getUserInfo(...usersData));
 
-      dbWrite.forEach((doc) => {
-        const writeId = doc.data().email;
-        if (writeId === atob(decode(params.id))) writeData.push(doc.data());
+      const writeSnapshot = await getDocs(dbWrite);
+      writeSnapshot.forEach((doc) => {
+        writeData.push(doc.data());
       });
-      setWrite([...writeData]);
+      dispatch(getUserWrite([...writeData]));
     };
     fetchData();
   }, []);
 
-  const logout = () => {};
+  const logout = async (event) => {
+    event.preventDefault();
+    await signOut(auth);
+    navigate("/");
+  };
 
   return (
     <Layout>
       <Nav>
         <NavBtn onClick={logout}>log out</NavBtn>
         <NavImgBtn onClick={() => navigate("/mypage/:id")}>
-          <NavImg src={user.photoURL ?? "/nullImg.png"} alt="" />
+          <NavImg src={userPhoto ?? "/nullImg.png"} alt="" />
         </NavImgBtn>
       </Nav>
       <Container>
@@ -55,17 +71,18 @@ function MyPage() {
           <EditBtn onClick={() => navigate("/edit/:id")}>
             <img src="" alt="" />
           </EditBtn>
-          <Img src={user.photoURL ?? "/nullImg.png"} alt="" />
+          <Img src={userPhoto ?? "/nullImg.png"} alt="" />
           <Profile>프로필</Profile>
         </ProfileImg>
         <NickNameBox>
-          {item.nickname}
+          {userInfo.nickname}
           <br />
-          나의 게시물 수 : {write.length} / 게시물 좋아요 수 : ♥ {}
+          나의 게시물 수 : {userWrite.length} / 게시물 좋아요 수 : ♥{" "}
+          {userWrite.map((obj) => Number(obj.like)).reduce((a, b) => a + b, 0)}
         </NickNameBox>
         <IntroBox>
           <div>소개글</div>
-          <div>{item.introduce}</div>
+          <div>{userInfo.introduce}</div>
         </IntroBox>
         <WriteList>
           나의 게시물

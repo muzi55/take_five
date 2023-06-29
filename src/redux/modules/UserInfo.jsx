@@ -1,8 +1,8 @@
-const UPLOAD_IMG = "UPLOAD_IMG";
+const GET_USER_INFO = "GET_USER_INFO";
 
-export const uploadImg = (payload) => {
+export const getUserInfo = (payload) => {
   return {
-    type: UPLOAD_IMG,
+    type: GET_USER_INFO,
     payload,
   };
 };
@@ -11,9 +11,8 @@ const initialState = [];
 
 const userInfo = (state = initialState, action) => {
   switch (action.type) {
-    case UPLOAD_IMG:
+    case GET_USER_INFO:
       return action.payload;
-
     default:
       return state;
   }
