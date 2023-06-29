@@ -98,18 +98,16 @@ const List = () => {
   });
   console.log(newarr);
 
-  // 인기순으로 정렬되어있는 함수입니다.
+  // 인기순으로 정렬하는 함수입니다.
   const popularList = [...newarr].sort((a, b) => {
-    if (a.like > b.like) return 1;
-    if (a.like < b.like) return -1;
+    if (a.like < b.like) return 1;
+    if (a.like > b.like) return -1;
     return 0;
   });
 
   // 최신순으로 정렬되어있는 함수입니다.
-  // like => date 로 값을 바꿔줘야합니다.
   const newestList = [...newarr].sort((a, b) => a.date - b.date);
 
-  console.log(popularList, newestList);
   return (
     <div>
       <WritingForm />
@@ -120,9 +118,9 @@ const List = () => {
           <p onClick={onClickListUl}>{state || '최신순'} ▼</p>
           <StListUl ref={openRef}>
             {/* 최신순 인기순 정렬 입니다. */}
-            {sortItems.map((item) => {
+            {sortItems.map((item, index) => {
               return (
-                <li key={item} onClick={() => onSetState(item)}>
+                <li key={index} onClick={() => onSetState(item)}>
                   {/* <li key={item} onClick={() => dispatch()}> */}
                   <span>{item}</span>
                 </li>
