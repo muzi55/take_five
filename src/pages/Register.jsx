@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import * as S from '../component/RegisterStyled';
+import * as S from '../style/RegisterStyled';
 import { auth, db } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
@@ -78,6 +78,7 @@ function Register() {
     [password]
   );
 
+  console.log(1111);
   const navigate = useNavigate();
   return (
     <S.Grid>
@@ -117,9 +118,7 @@ function Register() {
               onChange={onChangePassword}
             />
             <S.InputMessage>
-              {password.length > 0 && (
-                <span>{passwordMessage}</span>
-              )}
+              {password.length > 0 && <span>{passwordMessage}</span>}
             </S.InputMessage>
             <br />
             <S.InputName>비밀번호 확인</S.InputName>
@@ -151,12 +150,12 @@ function Register() {
                       password
                     );
                     // const id = userCredential.user.uid;// uid:id,
-                    const collectionRef = collection(db, 'user');
+                    const collectionRef = collection(db, 'users');
                     await addDoc(collectionRef, {
                       email: email,
                       nickName: nickName,
                     });
-                    navigate('/profile');
+                    navigate('/editprofile/:email');
                   } catch (error) {
                     console.error(error);
                   }

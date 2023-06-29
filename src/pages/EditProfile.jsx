@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
-import './EditProfile.css';
+import './../style/EditProfile.css';
 import { useNavigate } from 'react-router-dom';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 // import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 // import { auth, storage } from '../firebase';
 // import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
@@ -8,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 // const data = [{ id: 1, nickname: '닉네임', intro: '소개글', ability: '능력' }];
 
 function EditProfile() {
+  //
   let [isInputClickedName, setIsInputClickedName] = useState(false);
   let [isInputClickedNick, setIsInputClickedNick] = useState(false);
   let [isInputClickedIntro, setIsInputClickedIntro] = useState(false);
@@ -15,6 +18,22 @@ function EditProfile() {
 
   const [imgFile, setImgFile] = useState('');
   const imgRef = useRef();
+
+  //
+
+  // const updateUser = async (userId, newData) => {
+  //   try {
+  //     const userRef = db.collection('users').doc(userId);
+  //     await userRef.update(newData);
+  //     console.log('User updated successfully!');
+  //   } catch (error) {
+  //     console.log('Error updating user: ', error);
+  //   }
+  // };
+
+  //
+
+  //
 
   // 이미지 업로드 input의 onChange
   const saveImgFile = () => {
@@ -25,23 +44,9 @@ function EditProfile() {
       setImgFile(reader.result);
     };
   };
-
   const deleteImg = () => {
-    // updateProfile(auth.currentUser, {
-    //   photoURL: '',
-    // });
     setImgFile('');
   };
-
-  //   const handleUpload = async () => {
-  //     const imgRef = ref(storage, `${auth.currentUser.uid}/${selectedFile.name}`);
-  //     await uploadBytes(imgRef, selectedFile);
-
-  //     const downloadURL = await getDownloadURL(imgRef);
-  //     updateProfile(auth.currentUser, {
-  //       photoURL: downloadURL,
-  //     });
-  //   };
 
   const navigate = useNavigate();
   return (
@@ -166,16 +171,28 @@ function EditProfile() {
       </div>
       <br />
       <div className="buttonbox">
-        <button className="finishbtn">완료버튼</button>
         <button
+          className="finishbtn"
+          onClick={() => {
+            // navigate('/list');
+            console.log('버튼이 눌렸어 !!');
+          }}
+        >
+          저장
+          {/* zxc123@zxc123.com */}
+          {/* zxczxc123! */}
+        </button>
+        {/* 일단 보류 */}
+        {/* <button
           className="cancelbtn"
           onClick={() => {
             navigate('/Mypage');
           }}
         >
           취소
-        </button>
+        </button> */}
       </div>
+      <button>업데이트 </button>
     </div>
   );
 }

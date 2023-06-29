@@ -2,77 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../firebase';
 import { InnerBox } from './Write';
-import { styled } from 'styled-components';
+import { MyInfo, WriteBox } from '../style/DetailStyled';
+
 import { useParams } from 'react-router-dom';
-
-const MyInfo = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-
-  & img {
-    background-color: darkseagreen;
-    border-radius: 100%;
-  }
-  & .myInfo_text {
-    margin-left: 100px;
-    & dl {
-      width: 500px;
-      height: 40px;
-      display: flex;
-      background-color: #dfe0dc;
-      padding: 0 20px;
-      align-items: center;
-      margin: 30px 0;
-    }
-    & dt {
-      font-size: 18px;
-      font-weight: bold;
-      width: 80px;
-    }
-
-    & dl:nth-child(3) {
-      height: 130px;
-      display: flex;
-      align-items: normal;
-      padding: 20px;
-      flex-direction: column;
-    }
-    & dl:nth-child(3) dt {
-      font-size: 18px;
-      font-weight: bold;
-      width: 150px;
-    }
-    & dl:nth-child(3) dd {
-      margin-top: 20px;
-    }
-  }
-`;
-
-const WriteBox = styled.div`
-  margin-top: 120px;
-  & dl {
-    height: 185px;
-    padding: 20px;
-    background-color: #dfe0dc;
-    margin: 30px 0;
-
-    & dt {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    & dd {
-      margin-top: 20px;
-      font-size: 16px;
-    }
-  }
-`;
 
 function Detail() {
   const param = useParams();
-  const paramEmail = param.email.split('$')[0];
+  const paramEmail = param.email.split('&')[0];
   console.log(paramEmail);
   const [userInfo, setUserInfo] = useState({});
   // 데이터 읽기 -----------------------------------------------------
@@ -81,13 +17,13 @@ function Detail() {
       // collection 이름이 todos인 collection의 모든 document를 가져옵니다.
       const dbInfos = query(collection(db, 'infos'));
       const dbUsers = query(collection(db, 'users'));
-
+      //  히히히
       const querySnapshotInfo = await getDocs(dbInfos);
       const querySnapshotUser = await getDocs(dbUsers);
-
+      // 히히히
       const initialInfos = [];
       const initialUsers = [];
-
+      // 히히히
       // document의 id와 데이터를 initialTodos에 저장합니다.
       // doc.id의 경우 따로 지정하지 않는 한 자동으로 생성되는 id입니다.
       // doc.data()를 실행하면 해당 document의 데이터를 가져올 수 있습니다.
@@ -97,6 +33,7 @@ function Detail() {
       querySnapshotUser.forEach((doc) => {
         initialUsers.push({ id: doc.id, ...doc.data() });
       });
+      // 히히히
       console.log(initialInfos);
       console.log(initialUsers);
 

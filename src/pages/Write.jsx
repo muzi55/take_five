@@ -2,9 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import '../App.css';
 import { styled } from 'styled-components';
 import { addDoc, collection, getDocs, query } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../firebase';
 
 // 스타일드 컴포넌트
 // 💚 추후에 스타일드 컴포넌트 리팩토링할 것
@@ -142,7 +141,7 @@ function Write() {
       setGoodBad('');
 
       // 다시 list 페이지로 이동.
-      navigate('/');
+      navigate('/list');
     }
   };
 
