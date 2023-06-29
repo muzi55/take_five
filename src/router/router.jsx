@@ -1,18 +1,15 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-import List from '../pages/List';
-import Write from '../pages/Write';
-
-// import List from './../components/List';
+import Home from '../pages/Home';
+import Mypage from '../pages/Mypage';
+import EditProfile from '../pages/EditProfile';
 
 const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<List />} />
-        {/* <Route path="/write" element={<Home />} /> */}
-        <Route path="/write" element={<Write />} />
-        {/* <Route path="/home" element={<Home />} /> */}
+        <Route path="/" element={<Home />} />
+        <Route path="mypage" element={<Mypage />} />
+        <Route path="EditProfile" element={<EditProfile />} />
       </Routes>
     </BrowserRouter>
   );
