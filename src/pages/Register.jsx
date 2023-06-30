@@ -1,4 +1,4 @@
-import React, { useCallback} from 'react';
+import React, { useCallback } from 'react';
 import * as S from '../style/RegisterStyled';
 import { auth, db } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -69,7 +69,6 @@ function Register() {
       });
     }
   }, []);
-
   const onChangePasswordCheck = useCallback(
     (event) => {
       const passwordCheckCurrent = event.target.value;
@@ -88,7 +87,6 @@ function Register() {
     },
     [password]
   );
-
   const navigate = useNavigate();
   return (
     <S.Grid>
