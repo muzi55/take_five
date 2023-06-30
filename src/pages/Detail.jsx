@@ -62,14 +62,6 @@ function Detail() {
     fetchData();
   }, []);
 
-  // bucket이라는 변수로 firestore의 collection인 bucket에 접근
-  //   useEffect(() => {
-  //   const bucket = firestore.collection("infos");
-
-  //   // bucket 콜렉션의 bucket_item 문서 삭제
-  //   bucket.doc(userInfo.id).delete();
-  // })
-
   // 이부분이 위로 올라가야 업데이트가 원활히 됩니다.
   const { company, goodBad, grow, introduce, like, motive, name, skill } =
     userInfo;
@@ -90,7 +82,6 @@ function Detail() {
 
     setRender((render) => render + 1);
   };
-  // console.log(userInfo);
 
   return (
     <InnerBox>
