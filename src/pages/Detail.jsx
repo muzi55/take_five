@@ -17,7 +17,6 @@ import { useDispatch } from 'react-redux';
 
 import styled from 'styled-components';
 
-
 function Detail() {
   const navigate = useNavigate();
   const param = useParams();
@@ -29,9 +28,7 @@ function Detail() {
 
   const [userInfo, setUserInfo] = useState({});
 
-
   // firestore에서 infos, users 데이터 읽기
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -75,21 +72,17 @@ function Detail() {
     fetchData();
   }, []);
 
-
   // firestore 데이터 삭제 부분
   const { company, goodbad, grow, introduce, like, motive, name, spec } =
     userInfo;
 
   const deleteInfo = async (event) => {
-
     if (confirm('삭제하시겠습니까?')) {
       const todoRef = doc(db, 'infos', like);
       await deleteDoc(todoRef);
       navigate('/list');
     }
   };
-
-
 
   // 리덕스 사용
   const dispetch = useDispatch();
@@ -99,90 +92,91 @@ function Detail() {
       payload: userInfo,
     });
 
-  // 업데이트 부분
-  const [render, setRender] = useState(like);
-  const updateInfo = async (event) => {
-    const infoRef = doc(db, 'infos', info.id);
-    // 기존값, {...info, 변경해야할키 : 변경해야하는값}
-    await updateDoc(infoRef, { ...info, like: Number(like) + 1 }); // 업데이트할 필드 명시
+    // 업데이트 부분
+    const [render, setRender] = useState(like);
+    const updateInfo = async (event) => {
+      const infoRef = doc(db, 'infos', info.id);
+      // 기존값, {...info, 변경해야할키 : 변경해야하는값}
+      await updateDoc(infoRef, { ...info, like: Number(like) + 1 }); // 업데이트할 필드 명시
 
-    setRender((render) => render + 1);
+      setRender((render) => render + 1);
+    };
+
+    return (
+      <InnerBox>
+        {/* my page 내용 */}
+        <MyInfo>
+          {/* 추가부분 라이크 박스 */}
+          <StLikeSpan>
+            <img onClick={updateInfo} src={LikeImg} alt="하트모양 이미지" /> :
+            {render}
+            {like}
+          </StLikeSpan>
+          <img
+            src="https://velog.velcdn.com/images/seul-bean/profile/259fe091-ca51-424b-bf1a-aca4da376a9c/social_profile.png"
+            alt="프로필 사진"
+          />
+          <div className="myInfo_text">
+            <dl>
+              <dt>Name</dt>
+              <dd>{name}</dd>
+            </dl>
+            <dl>
+              <dt>spec</dt>
+              <dd>{spec}</dd>
+            </dl>
+            <dl>
+              <dt>Introduce</dt>
+              <dd>{introduce}</dd>
+            </dl>
+          </div>
+        </MyInfo>
+
+        {/* write 내용 */}
+        <WriteBox>
+          <dl>
+            <dt>본인이 지원하고자 하는 회사란?</dt>
+            <dd>{company}</dd>
+          </dl>
+          <dl>
+            <dt>지원하게 된 동기?</dt>
+            <dd>{motive}</dd>
+          </dl>
+          <dl>
+            <dt>자신의 성장과정</dt>
+            <dd>{grow}</dd>
+          </dl>
+          <dl>
+            <dt>자신의 장단점</dt>
+            <dd>{goodBad}</dd>
+          </dl>
+        </WriteBox>
+
+        {/* 수정, 삭제 버튼 */}
+        <WriteBtn>
+          <button
+            onClick={() => {
+              editDetail();
+              navigate(`/editdetail/${userInfo.id}`);
+            }}
+            ref={editIdRef}
+          >
+            수정
+          </button>
+          <button onClick={deleteInfo} ref={deleteIdRef}>
+            삭제
+          </button>
+          <button
+            onClick={() => {
+              navigate('/list');
+            }}
+          >
+            이전페이지
+          </button>
+        </WriteBtn>
+      </InnerBox>
+    );
   };
-
-  return (
-    <InnerBox>
-      {/* my page 내용 */}
-      <MyInfo>
-        {/* 추가부분 라이크 박스 */}
-        <StLikeSpan>
-          <img onClick={updateInfo} src={LikeImg} alt="하트모양 이미지" /> :
-          {render}
-          {like}
-        </StLikeSpan>
-        <img
-          src="https://velog.velcdn.com/images/seul-bean/profile/259fe091-ca51-424b-bf1a-aca4da376a9c/social_profile.png"
-          alt="프로필 사진"
-        />
-        <div className="myInfo_text">
-          <dl>
-            <dt>Name</dt>
-            <dd>{name}</dd>
-          </dl>
-          <dl>
-            <dt>spec</dt>
-            <dd>{spec}</dd>
-          </dl>
-          <dl>
-            <dt>Introduce</dt>
-            <dd>{introduce}</dd>
-          </dl>
-        </div>
-      </MyInfo>
-
-      {/* write 내용 */}
-      <WriteBox>
-        <dl>
-          <dt>본인이 지원하고자 하는 회사란?</dt>
-          <dd>{company}</dd>
-        </dl>
-        <dl>
-          <dt>지원하게 된 동기?</dt>
-          <dd>{motive}</dd>
-        </dl>
-        <dl>
-          <dt>자신의 성장과정</dt>
-          <dd>{grow}</dd>
-        </dl>
-        <dl>
-          <dt>자신의 장단점</dt>
-          <dd>{goodBad}</dd>
-        </dl>
-      </WriteBox>
-
-      {/* 수정, 삭제 버튼 */}
-      <WriteBtn>
-        <button
-          onClick={() => {
-            editDetail();
-            navigate(`/editdetail/${userInfo.id}`);
-          }}
-          ref={editIdRef}
-        >
-          수정
-        </button>
-        <button onClick={deleteInfo} ref={deleteIdRef}>
-          삭제
-        </button>
-        <button
-          onClick={() => {
-            navigate('/list');
-          }}
-        >
-          이전페이지
-        </button>
-      </WriteBtn>
-    </InnerBox>
-  );
 }
 
 export default Detail;
