@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   collection,
   deleteDoc,
@@ -7,27 +7,34 @@ import {
   query,
   updateDoc,
 } from 'firebase/firestore';
-
-import { db } from '../firebase';
-import { InnerBox } from './Write';
+import { auth, db } from '../firebase';
+import { InnerBox, WriteBtn } from './Write';
 import { MyInfo, WriteBox } from '../style/DetailStyled';
 
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import LikeImg from '../images/Like.svg';
+import { useDispatch } from 'react-redux';
+
 import styled from 'styled-components';
 
+
 function Detail() {
+  const navigate = useNavigate();
   const param = useParams();
   const paramEmail = param.email.split('&')[0];
   const paramId = param.email.split('&')[1];
 
-  const [userInfo, setUserInfo] = useState({});
-  const [info, setInfo] = useState({});
+  const deleteIdRef = useRef('');
+  const editIdRef = useRef('');
 
-  // 데이터 읽기 -----------------------------------------------------
+  const [userInfo, setUserInfo] = useState({});
+
+
+  // firestore에서 infos, users 데이터 읽기
+
+
   useEffect(() => {
     const fetchData = async () => {
-      // collection 이름이 todos인 collection의 모든 document를 가져옵니다.
       const dbInfos = query(collection(db, 'infos'));
       const dbUsers = query(collection(db, 'users'));
 
@@ -37,9 +44,6 @@ function Detail() {
       const initialInfos = [];
       const initialUsers = [];
 
-      // document의 id와 데이터를 initialTodos에 저장합니다.
-      // doc.id의 경우 따로 지정하지 않는 한 자동으로 생성되는 id입니다.
-      // doc.data()를 실행하면 해당 document의 데이터를 가져올 수 있습니다.
       querySnapshotInfo.forEach((doc) => {
         initialInfos.push({ id: doc.id, ...doc.data() });
       });
@@ -58,19 +62,42 @@ function Detail() {
           setInfo(filterInfo[0]);
         }
       });
+
+      const userEmail = auth.currentUser.email;
+      if (userEmail !== paramEmail) {
+        deleteIdRef.current.style.display = 'none';
+        editIdRef.current.style.display = 'none';
+      } else {
+        deleteIdRef.current.style.display = 'inline-block';
+        editIdRef.current.style.display = 'inline-block';
+      }
     };
     fetchData();
   }, []);
 
+
+  // firestore 데이터 삭제 부분
   const { company, goodbad, grow, introduce, like, motive, name, spec } =
     userInfo;
 
   const deleteInfo = async (event) => {
+
     if (confirm('삭제하시겠습니까?')) {
       const todoRef = doc(db, 'infos', like);
       await deleteDoc(todoRef);
+      navigate('/list');
     }
   };
+
+
+
+  // 리덕스 사용
+  const dispetch = useDispatch();
+  const editDetail = () => {
+    dispetch({
+      type: 'EDIT_DETAIL',
+      payload: userInfo,
+    });
 
   // 업데이트 부분
   const [render, setRender] = useState(like);
@@ -131,8 +158,29 @@ function Detail() {
           <dd>{goodBad}</dd>
         </dl>
       </WriteBox>
-      <button>수정</button>
-      <button onClick={deleteInfo}>삭제</button>
+
+      {/* 수정, 삭제 버튼 */}
+      <WriteBtn>
+        <button
+          onClick={() => {
+            editDetail();
+            navigate(`/editdetail/${userInfo.id}`);
+          }}
+          ref={editIdRef}
+        >
+          수정
+        </button>
+        <button onClick={deleteInfo} ref={deleteIdRef}>
+          삭제
+        </button>
+        <button
+          onClick={() => {
+            navigate('/list');
+          }}
+        >
+          이전페이지
+        </button>
+      </WriteBtn>
     </InnerBox>
   );
 }

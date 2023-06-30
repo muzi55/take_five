@@ -14,7 +14,7 @@ const ListItem = ({ lists }) => {
               email,
               company,
               introduce,
-              skill,
+              spec,
               like,
               id,
             } = list;
@@ -41,7 +41,7 @@ const ListItem = ({ lists }) => {
                     <StListTextP>{company}</StListTextP>
                     <StListTextP opacity="0.8">{introduce}</StListTextP>
                     <StListTextP opacity="0.7" className="list-text-hash">
-                      {skill}
+                      {spec}
                     </StListTextP>
                   </StListTextBox>
                 </Link>
