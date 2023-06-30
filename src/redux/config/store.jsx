@@ -1,8 +1,13 @@
-import { createStore } from 'redux';
-import { combineReducers } from 'redux';
+import { createStore } from "redux";
+import { combineReducers } from "redux";
+import userInfo from "../modules/UserInfo";
+import userWrite from "../modules/UserWrite";
+import userPhoto from "../modules/UserPhoto";
 
 const rootReducer = combineReducers({
-  // 여기서 부터 추가 !!
+  userInfo,
+  userWrite,
+  userPhoto,
 });
 
 const store = createStore(rootReducer);

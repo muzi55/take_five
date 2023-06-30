@@ -1,53 +1,91 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { styled } from "styled-components";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  getDocs,
+  query,
+  where,
+  doc,
+} from "firebase/firestore";
 import { auth, db } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { decode } from "url-safe-base64";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserInfo } from "../redux/modules/UserInfo";
+import { getUserWrite } from "../redux/modules/UserWrite";
+import { getUserPhoto } from "../redux/modules/UserPhoto";
 
 function MyPage() {
   const navigate = useNavigate();
   const params = useParams();
-  const [item, setItem] = useState([]);
-  const [write, setWrite] = useState([]);
-  const user = auth.currentUser;
-  //로컬, 세션 스토리지를 이용한 새로고침 대응
+  const dispatch = useDispatch();
+  const userInfo = useSelector((state) => state.userInfo);
+  const userWrite = useSelector((state) => state.userWrite);
+  const userPhoto = useSelector((state) => state.userPhoto);
 
   useEffect(() => {
-    onAuthStateChanged(auth, (users) => {
-      console.log(users);
-    });
-
-    const fetchData = async () => {
-      const dbUsers = await getDocs(collection(db, "users"));
-      const dbWrite = await getDocs(collection(db, "infos"));
-      const usersData = [];
-      const writeData = [];
-
-      dbUsers.forEach((doc) => {
-        const usersId = doc.data().email;
-        if (usersId === atob(decode(params.id))) usersData.push(doc.data());
-      });
-      setItem(...usersData);
-
-      dbWrite.forEach((doc) => {
-        const writeId = doc.data().email;
-        if (writeId === atob(decode(params.id))) writeData.push(doc.data());
-      });
-      setWrite([...writeData]);
-    };
-    fetchData();
+    fetchUserData();
+    fetchInfoData();
   }, []);
 
-  const logout = () => {};
+  onAuthStateChanged(auth, (users) => {
+    dispatch(getUserPhoto(users.photoURL));
+  });
+
+  const fetchUserData = async () => {
+    const dbUsers = query(
+      collection(db, "users"),
+      where("email", "==", atob(decode(params.id)))
+    );
+
+    const usersData = [];
+
+    const userSnapshot = await getDocs(dbUsers);
+    userSnapshot.forEach((doc) => {
+      usersData.push(doc.data());
+    });
+    dispatch(getUserInfo(...usersData));
+  };
+
+  const fetchInfoData = async () => {
+    const dbWrite = query(
+      collection(db, "infos"),
+      where("email", "==", atob(decode(params.id)))
+    );
+
+    const writeData = [];
+
+    const writeSnapshot = await getDocs(dbWrite);
+    writeSnapshot.forEach((doc) => {
+      writeData.push({ id: doc.id, ...doc.data() });
+    });
+    dispatch(getUserWrite([...writeData]));
+  };
+
+  const logout = async (event) => {
+    if (confirm("로그아웃 하시겠습니까?")) {
+      event.preventDefault();
+      await signOut(auth);
+      navigate("/");
+    }
+  };
+
+  const deleteWrite = async (id) => {
+    if (confirm("삭제 하시겠습니까?")) {
+      const writeRef = doc(db, "infos", id);
+      await deleteDoc(writeRef);
+      fetchInfoData();
+    }
+  };
 
   return (
     <Layout>
       <Nav>
         <NavBtn onClick={logout}>log out</NavBtn>
         <NavImgBtn onClick={() => navigate("/mypage/:id")}>
-          <NavImg src={user.photoURL ?? "/nullImg.png"} alt="" />
+          <NavImg src={userPhoto ?? "/nullImg.png"} alt="" />
         </NavImgBtn>
       </Nav>
       <Container>
@@ -55,60 +93,37 @@ function MyPage() {
           <EditBtn onClick={() => navigate("/edit/:id")}>
             <img src="" alt="" />
           </EditBtn>
-          <Img src={user.photoURL ?? "/nullImg.png"} alt="" />
+          <Img src={userPhoto ?? "/nullImg.png"} alt="" />
           <Profile>프로필</Profile>
         </ProfileImg>
         <NickNameBox>
-          {item.nickname}
+          {userInfo.nickname}
           <br />
-          나의 게시물 수 : {write.length} / 게시물 좋아요 수 : ♥ {}
+          나의 게시물 수 : {userWrite.length} / 게시물 좋아요 수 : ♥{" "}
+          {userWrite.map((obj) => Number(obj.like)).reduce((a, b) => a + b, 0)}
         </NickNameBox>
         <IntroBox>
           <div>소개글</div>
-          <div>{item.introduce}</div>
+          <div>{userInfo.introduce}</div>
         </IntroBox>
         <WriteList>
           나의 게시물
-          <StList>
-            <ListTitle>
-              아무튼 그냥 테스트용 긴 텍스트
-              <ListBtn>♥</ListBtn>
-            </ListTitle>
-            <ListBtnBox>
-              <ListBtn onClick={() => navigate("/")}>수정</ListBtn>
-              <ListBtn>삭제</ListBtn>
-            </ListBtnBox>
-          </StList>
-          <StList>
-            <ListTitle>
-              text
-              <ListBtn>♥</ListBtn>
-            </ListTitle>
-            <ListBtnBox>
-              <ListBtn onClick={() => navigate("/")}>수정</ListBtn>
-              <ListBtn>삭제</ListBtn>
-            </ListBtnBox>
-          </StList>
-          <StList>
-            <ListTitle>
-              text
-              <ListBtn>♥</ListBtn>
-            </ListTitle>
-            <ListBtnBox>
-              <ListBtn onClick={() => navigate("/")}>수정</ListBtn>
-              <ListBtn>삭제</ListBtn>
-            </ListBtnBox>
-          </StList>
-          <StList>
-            <ListTitle>
-              text
-              <ListBtn>♥</ListBtn>
-            </ListTitle>
-            <ListBtnBox>
-              <ListBtn onClick={() => navigate("/")}>수정</ListBtn>
-              <ListBtn>삭제</ListBtn>
-            </ListBtnBox>
-          </StList>
+          {userWrite.map((obj) => {
+            return (
+              <StList key={obj.id}>
+                <ListTitle>
+                  {obj.email}
+                  <ListBtn>♥{obj.like}</ListBtn>
+                </ListTitle>
+                <ListBtnBox>
+                  <ListBtn onClick={() => navigate(`/editdetail/${obj.id}`)}>
+                    수정
+                  </ListBtn>
+                  <ListBtn onClick={() => deleteWrite(obj.id)}>삭제</ListBtn>
+                </ListBtnBox>
+              </StList>
+            );
+          })}
         </WriteList>
       </Container>
     </Layout>

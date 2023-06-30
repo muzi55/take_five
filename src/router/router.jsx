@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
 import List from '../pages/List';
 import Home from '../pages/Home';
 import Write from '../pages/Write';
@@ -7,6 +6,7 @@ import Detail from '../pages/Detail';
 import Mypage from '../pages/Mypage';
 import EditProfile from '../pages/EditProfile';
 import Register from '../pages/Register';
+
 
 const Router = () => {
   return (
