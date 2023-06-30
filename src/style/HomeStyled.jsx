@@ -1,22 +1,26 @@
 import styled, { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyle = createGlobalStyle` 
+  html{
+  display: grid;
+  justify-content: center;
+  }
   body{
     background-color:#DFE0DC;
   }
+
 `;
 export const Grid = styled.span`
   display: grid;
-  grid-template-columns: 2fr 1fr 30px;
+  grid-template-columns: 30px 900px 30px 260px 120px;
   grid-template-rows: 30px 2fr 30px;
-  grid-gap: 20px;
-  /* margin:50px auto 50px -5px; */
+  grid-gap: 15px;
   align-items: center;
+  min-width: 1400px;
 `;
 export const MainBox = styled.span`
+  grid-column: 2/3;
   grid-row: 2/3;
-  /* grid-column-start:1;
-grid-column-end:2; */
   background-color: #6c8383;
   padding: 50px;
   height: 400px;
@@ -30,7 +34,7 @@ export const TitleSmall = styled.span`
   font-size: 10px;
 `;
 export const Login = styled.div`
-  grid-column: 2/3;
+  grid-column: 4/5;
   grid-row: 2/3;
   align-self: center;
   justify-self: center;
@@ -68,7 +72,7 @@ export const SignButton = styled.button`
   margin-right: 5px;
   font-weight: bold;
   border: none;
-  &:focus {
+  &:active {
     background-color: #4a666d;
   }
 `;
@@ -79,7 +83,7 @@ export const LoginButton = styled.button`
   margin-left: 5px;
   font-weight: bold;
   border: none;
-  &:focus {
+  &:active {
     background-color: #4a666d;
   }
 `;

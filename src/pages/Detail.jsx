@@ -62,8 +62,7 @@ function Detail() {
     fetchData();
   }, []);
 
-  // 이부분이 위로 올라가야 업데이트가 원활히 됩니다.
-  const { company, goodBad, grow, introduce, like, motive, name, skill } =
+  const { company, goodbad, grow, introduce, like, motive, name, spec } =
     userInfo;
 
   const deleteInfo = async (event) => {
@@ -103,8 +102,8 @@ function Detail() {
             <dd>{name}</dd>
           </dl>
           <dl>
-            <dt>skill</dt>
-            <dd>{skill}</dd>
+            <dt>spec</dt>
+            <dd>{spec}</dd>
           </dl>
           <dl>
             <dt>Introduce</dt>
