@@ -37,8 +37,6 @@ function Detail() {
         initialUsers.push({ id: doc.id, ...doc.data() });
       });
 
-      // console.log(initialUsers);
-
       const filterInfo = initialInfos.filter((info) => {
         if (info.email === paramEmail) {
           return info;

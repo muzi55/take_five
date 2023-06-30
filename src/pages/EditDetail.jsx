@@ -36,19 +36,19 @@ function EditDetail() {
     event.preventDefault();
 
     // 유효성 검사
-    if (company === '') {
+    if (editCompany === '') {
       alert('"본인이 지원하고자 하는 회사" 내용을 입력해주세요.');
       companyRef.current.focus();
       return false;
-    } else if (motive === '') {
+    } else if (editMotive === '') {
       alert('"지원하게 된 동기" 내용을 입력해주세요.');
       motiveRef.current.focus();
       return false;
-    } else if (grow === '') {
+    } else if (editGrow === '') {
       alert('"자신의 성장과정" 내용을 입력해주세요.');
       growRef.current.focus();
       return false;
-    } else if (goodBad === '') {
+    } else if (editGoodBad === '') {
       alert('"자신의 장단점" 내용을 입력해주세요.');
       goodBadRef.current.focus();
       return false;
