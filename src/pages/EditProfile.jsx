@@ -1,11 +1,8 @@
 import React, { useState, useRef } from 'react';
 import './../style/EditProfile.css';
+import { auth, db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../firebase';
-// import { onAuthStateChanged, updateProfile } from 'firebase/auth';
-// import { auth, storage } from '../firebase';
-// import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { collection, addDoc } from 'firebase/firestore';
 
 // const data = [{ id: 1, nickname: '닉네임', intro: '소개글', ability: '능력' }];
 
@@ -15,6 +12,11 @@ function EditProfile() {
   let [isInputClickedNick, setIsInputClickedNick] = useState(false);
   let [isInputClickedIntro, setIsInputClickedIntro] = useState(false);
   let [isInputClickedSpec, setIsInputClickedSpec] = useState(false);
+
+  const [name, setName] = useState('');
+  const [nickname, setNickName] = useState('');
+  const [intro, setIntro] = useState('');
+  const [spec, setSpec] = useState('');
 
   const [imgFile, setImgFile] = useState('');
   const imgRef = useRef();
@@ -32,6 +34,22 @@ function EditProfile() {
   // };
 
   //
+
+  const saveName = (event) => {
+    setName(event.target.value);
+  };
+
+  const saveNickName = (event) => {
+    setNickName(event.target.value);
+  };
+
+  const saveIntro = (event) => {
+    setIntro(event.target.value);
+  };
+
+  const saveSpec = (event) => {
+    setSpec(event.target.value);
+  };
 
   //
 
@@ -51,8 +69,10 @@ function EditProfile() {
   const navigate = useNavigate();
   return (
     <div className="upload">
-      프로필 <br />
-      고객과 회사에게 보여지는 정보를 설정해주세요.
+      <h2 className="profile_title">프로필 설정</h2> <br />
+      <p className="guide_coment">
+        고객과 회사에게 보여지는 정보를 설정해주세요.
+      </p>
       <br />
       <div className="editbox">
         <div className="divUP">
@@ -111,6 +131,8 @@ function EditProfile() {
                 isInputClickedName === true ? '' : '이름을 입력해주세요.'
               }
               type="text"
+              value={name}
+              onChange={saveName}
             ></input>
           </div>
           <div className="divnick">
@@ -129,6 +151,8 @@ function EditProfile() {
                 isInputClickedNick === true ? '' : '닉네임을 입력해주세요.'
               }
               type="text"
+              value={nickname}
+              onChange={saveNickName}
             ></input>
           </div>
           <div className="divintro">
@@ -147,6 +171,8 @@ function EditProfile() {
                 isInputClickedIntro === true ? '' : '소개글을 입력해주세요.'
               }
               type="text"
+              value={intro}
+              onChange={saveIntro}
             ></input>
           </div>
           <div className="divsp">
@@ -165,6 +191,8 @@ function EditProfile() {
                 isInputClickedSpec === true ? '' : '자기스펙을 입력해주세요.'
               }
               type="text"
+              value={spec}
+              onChange={saveSpec}
             ></input>
           </div>
         </div>
@@ -173,9 +201,21 @@ function EditProfile() {
       <div className="buttonbox">
         <button
           className="finishbtn"
-          onClick={() => {
-            // navigate('/list');
-            console.log('버튼이 눌렸어 !!');
+          onClick={async () => {
+            try {
+              const docRef = await addDoc(collection(db, 'users'), {
+                name,
+                nickname,
+                intro,
+                spec,
+                imgFile,
+              });
+              console.log('Document written with ID: ', docRef.id);
+            } catch (e) {
+              console.error('Error adding document: ', e);
+            }
+            alert('프로필이 저장되었습니다.🎉');
+            navigate('/list');
           }}
         >
           저장
@@ -192,7 +232,6 @@ function EditProfile() {
           취소
         </button> */}
       </div>
-      <button>업데이트 </button>
     </div>
   );
 }
