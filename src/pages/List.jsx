@@ -1,53 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-//
 import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../firebase';
 import ListItem from '../components/ListItem';
-import WritingForm from '../components/ListItem';
-//
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-// import { changeListItem } from '../redux/modules/lists';
 import img from './../images/wirteBtn.svg';
 
 const List = () => {
   const navigate = useNavigate();
   const [lists, setLists] = useState([]);
   const [users, setUsers] = useState([]);
-
-  // 리덕스
-  const dispatch = useDispatch();
-  const listSelector = useSelector((state) => {
-    return state;
-  });
-
-  // 파이어베이스
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     // collection 이름이 todos인 collection의 모든 document를 가져옵니다.
-  //     const qusers = query(collection(db, 'users'));
-  //     const qinfos = query(collection(db, 'infos'));
-  //     // const q = query(collection(db, 'users'));
-  //     const querySnapshotUsers = await getDocs(qusers);
-  //     const querySnapshotInfos = await getDocs(qinfos);
-  //     const initialUsers = [];
-  //     const initialInfos = [];
-  //     // document의 id와 데이터를 initialTodos에 저장합니다.
-  //     // doc.id의 경우 따로 지정하지 않는 한 자동으로 생성되는 id입니다.
-  //     // doc.data()를 실행하면 해당 document의 데이터를 가져올 수 있습니다.
-  //     querySnapshotUsers.forEach((doc) => {
-  //       initialUsers.push({ id: doc.id, ...doc.data() });
-  //     });
-  //     querySnapshotInfos.forEach((doc) => {
-  //       initialInfos.push({ id: doc.id, ...doc.data() });
-  //     });
-  //     setLists(initialUsers);
-  //     setUsers(initialInfos);
-
-  //   };
-  //   fetchData();
-  // }, []);
 
   const fetchData = async () => {
     // collection 이름이 todos인 collection의 모든 document를 가져옵니다.
@@ -69,11 +32,7 @@ const List = () => {
     });
     setLists(initialUsers);
     setUsers(initialInfos);
-    console.log(initialUsers);
-    console.log(initialInfos);
   };
-  // console.log('lists', lists);
-  // console.log('users', users);
 
   useEffect(() => {
     fetchData();
@@ -98,16 +57,16 @@ const List = () => {
   `;
 
   // 토글 정렬
-  const sortItems = ['최신순', '인기순'];
-  const [state, setState] = useState(sortItems[0]);
+
   // 중복된 값을 저지하는 함수이벤트입니다.
   const onSetState = (e) => {
-    state === e ? (openRef.current.style.display = 'none') : setState(e);
+    state === e
+      ? (openRef.current.style.display = 'none')
+      : setState(e.innetText);
     changeUl.current = 'none';
   };
 
   // toggle 정렬입니다.
-  const [render, setRender] = useState('0');
   const changeUl = useRef('none');
   const onClickListUl = () => {
     // 여기서 redux 추가되야합니다.
@@ -141,6 +100,11 @@ const List = () => {
   // like => date 로 값을 바꿔줘야합니다.
   // 현재 date값이 객체입니다. 이부분은 보안이 필요합니다.
   const newestList = [...newarr].sort((a, b) => a.date - b.date);
+
+  const sortItems = ['최신순', '인기순'];
+  const [state, setState] = useState('최신순');
+
+  console.log(state);
   return (
     <div>
       {/* <WritingForm>히히히</WritingForm> */}
@@ -161,16 +125,12 @@ const List = () => {
             {sortItems.map((item, index) => {
               return (
                 // <li key={item} onClick={() => onSetState(item)}>
-                // 리덕스를 사용해 정렬했습니다. !
                 <li
                   key={index}
                   onClick={() => {
                     console.log(1);
-                    // dispatch(() => {
-                    //   // changeListItem(item);
-                    // });
-                    setState(listSelector.lists);
-                    onSetState(listSelector.lists);
+                    setState(item);
+                    onClickListUl();
                   }}
                 >
                   {/* <li key={item} onClick={() => dispatch()}> */}

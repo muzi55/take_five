@@ -84,7 +84,7 @@ function Write() {
   const [grow, setGrow] = useState('');
   const [goodBad, setGoodBad] = useState('');
 
-  // const userEmail = auth.currentUser.email;
+  const userEmail = auth.currentUser.email;
 
   //유효성 검사 돔요소 접근
   const companyRef = useRef('');
@@ -97,7 +97,7 @@ function Write() {
     event.preventDefault();
 
     const newInfo = {
-      // email: userEmail,
+      email: userEmail,
       date: new Date(),
       company,
       motive,

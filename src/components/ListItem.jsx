@@ -11,7 +11,7 @@ const ListItem = ({ lists }) => {
       {console.log(lists)}
       {lists
         ? lists.map((list, index) => {
-            const { img, name, email, company, introduce, skill, like, date } =
+            const { img, name, email, company, introduce, spec, like, date } =
               list;
 
             // Hash는 다른곳에서 받아와야합니다.
@@ -33,7 +33,7 @@ const ListItem = ({ lists }) => {
                     <StListTextP>{company}</StListTextP>
                     <StListTextP opacity="0.8">{introduce}</StListTextP>
                     <StListTextP opacity="0.7" className="list-text-hash">
-                      {skill}
+                      {spec}
                     </StListTextP>
                   </StListTextBox>
                 </Link>
@@ -54,11 +54,12 @@ const StListImgBox = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  height: 6rem;
+  background-color: yellow;
+  height: 12rem;
   margin-bottom: 10px;
   & > img {
+    background-color: green;
     display: block;
-    width: 6rem;
     border-radius: 6rem;
   }
 `;
