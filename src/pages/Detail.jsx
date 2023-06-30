@@ -62,7 +62,7 @@ function Detail() {
     fetchData();
   }, []);
 
-  const { company, goodbad, grow, introduce, like, motive, name, skill } =
+  const { company, goodbad, grow, introduce, like, motive, name, spec } =
     userInfo;
   //----------------------------------------------------------------------------
 
@@ -80,8 +80,8 @@ function Detail() {
             <dd>{name}</dd>
           </dl>
           <dl>
-            <dt>skill</dt>
-            <dd>{skill}</dd>
+            <dt>spec</dt>
+            <dd>{spec}</dd>
           </dl>
           <dl>
             <dt>Introduce</dt>

@@ -1,8 +1,9 @@
 import { createStore } from 'redux';
 import { combineReducers } from 'redux';
+import LoginModule from '../modules/LoginModule';
 
 const rootReducer = combineReducers({
-  // 여기서 부터 추가 !!
+  LoginModule,
 });
 
 const store = createStore(rootReducer);

@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import * as H from '../style/HomeStyled';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
-import { encode } from 'url-safe-base64';
+// import { encode } from 'url-safe-base64';
+import { useSelector, useDispatch } from 'react-redux';
 
 function Home() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const email = useSelector((state) => {
+    return state.LoginModule.email;
+  });
+  const password = useSelector((state) => {
+    return state.LoginModule.password;
+  });
 
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
-      // console.log('user', user);
-    });
-  }, []);
-
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const onChange = (event) => {
@@ -24,44 +22,51 @@ function Home() {
       target: { name, value },
     } = event;
     if (name === 'email') {
-      setEmail(value);
+      dispatch({ type: 'CHANGE_EMAIL', payload: value });
     }
     if (name === 'password') {
-      setPassword(value);
+      dispatch({ type: 'CHANGE_PASSWORD', payload: value });
     }
   };
+  // 삭제해도 되는지 확인..
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
+      // /console.log('user', user);
+    });
+  }, []);
 
   return (
     <H.Grid>
       <H.GlobalStyle />
       <H.MainBox>
         <div>
-          <H.TitleBig>자기 P</H.TitleBig>
-          <H.TitleSmall>ublic </H.TitleSmall>
-          <H.TitleBig>R</H.TitleBig>
-          <H.TitleSmall>elations </H.TitleSmall>
-          <H.TitleBig>actic</H.TitleBig>
+          <div>
+            {/* 사진으로 바꾸거나 고민해보기기 */}
+            <H.TitleBig>자기 P</H.TitleBig>
+            <H.TitleSmall>ublic </H.TitleSmall>
+            <H.TitleBig>R</H.TitleBig>
+            <H.TitleSmall>elations </H.TitleSmall>
+            <H.TitleBig>actic</H.TitleBig>
+          </div>
           <br />
           <br />
-          <br />
-          <p>
-            자기 pr을 연습해보세요!
+          <div>
+            <div>자기 pr을 연습해보세요!</div>
             <br />
             <br />
-            <br />
-            자기 자신을 스스로 다른 사람들에게 알리는 <br />
-            <br />
-            자기pr을 연습하기 위한 페이지입니다.
-            <br />
-            <br />
-            <br />
-            자신의 강점을 알고 소개하는 방법을 sns방식으로 터득할 수 있습니다.
+            <div>
+              자기 자신을 스스로 다른 사람들에게 알리는 <br /> <br />
+              자기pr을 연습하기 위한 페이지입니다.
+            </div>
             <br />
             <br />
-            한 단계 발전하기 위해 타인의 pr도 살펴보세요.
+            <div>
+              자신의 강점을 알고 소개하는 방법을 sns방식으로 터득할 수 있습니다.
+            </div>
             <br />
-            <br />
-          </p>
+            <div>한 단계 발전하기 위해 타인의 pr도 살펴보세요.</div>
+          </div>
         </div>
       </H.MainBox>
 
@@ -109,15 +114,14 @@ function Home() {
                       email,
                       password
                     );
-                    const url = userCredential.user.email;
-                    navigate(`/mypage/${encode(btoa(url))}`);
-                    // navigate('/list');
+                    navigate('/list');
                   } catch (error) {
                     console.error(error);
                   }
                 }
               }}
             >
+              {' '}
               로그인
             </H.LoginButton>
           </div>
@@ -126,5 +130,4 @@ function Home() {
     </H.Grid>
   );
 }
-
 export default Home;
