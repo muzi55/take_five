@@ -7,6 +7,7 @@ import Detail from '../pages/Detail';
 import Mypage from '../pages/Mypage';
 import EditProfile from '../pages/EditProfile';
 import Register from '../pages/Register';
+import EditDetail from '../pages/EditDetail';
 
 const Router = () => {
   return (
@@ -20,7 +21,7 @@ const Router = () => {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/write" element={<Write />} />
-        <Route path="/detail" element={<Detail />} />
+        <Route path="/editdetail/:email" element={<EditDetail />} />
         <Route path="/list" element={<List />} />
         <Route path="/detail/:email" element={<Detail />} />
         <Route path="/mypage/:email" element={<Mypage />} />

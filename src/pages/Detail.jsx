@@ -1,21 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { collection, deleteDoc, doc, getDocs, query } from 'firebase/firestore';
-import { db } from '../firebase';
-import { InnerBox } from './Write';
+import { auth, db } from '../firebase';
+import { InnerBox, WriteBtn } from './Write';
 import { MyInfo, WriteBox } from '../style/DetailStyled';
 
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 function Detail() {
+  const navigate = useNavigate();
   const param = useParams();
   const paramEmail = param.email.split('&')[0];
   const paramId = param.email.split('&')[1];
 
+  const deleteIdRef = useRef('');
+  const editIdRef = useRef('');
+
   const [userInfo, setUserInfo] = useState({});
-  // 데이터 읽기 -----------------------------------------------------
+
+  // firestore에서 infos, users 데이터 읽기
   useEffect(() => {
     const fetchData = async () => {
-      // collection 이름이 todos인 collection의 모든 document를 가져옵니다.
       const dbInfos = query(collection(db, 'infos'));
       const dbUsers = query(collection(db, 'users'));
 
@@ -25,9 +30,6 @@ function Detail() {
       const initialInfos = [];
       const initialUsers = [];
 
-      // document의 id와 데이터를 initialTodos에 저장합니다.
-      // doc.id의 경우 따로 지정하지 않는 한 자동으로 생성되는 id입니다.
-      // doc.data()를 실행하면 해당 document의 데이터를 가져올 수 있습니다.
       querySnapshotInfo.forEach((doc) => {
         initialInfos.push({ id: doc.id, ...doc.data() });
       });
@@ -35,8 +37,7 @@ function Detail() {
         initialUsers.push({ id: doc.id, ...doc.data() });
       });
 
-      // console.log(initialInfos);
-      console.log(initialUsers);
+      // console.log(initialUsers);
 
       const filterInfo = initialInfos.filter((info) => {
         if (info.email === paramEmail) {
@@ -49,28 +50,40 @@ function Detail() {
           setUserInfo({ ...user, ...filterInfo[0] });
         }
       });
+
+      const userEmail = auth.currentUser.email;
+      if (userEmail !== paramEmail) {
+        deleteIdRef.current.style.display = 'none';
+        editIdRef.current.style.display = 'none';
+      } else {
+        deleteIdRef.current.style.display = 'inline-block';
+        editIdRef.current.style.display = 'inline-block';
+      }
     };
     fetchData();
   }, []);
 
-  // bucket이라는 변수로 firestore의 collection인 bucket에 접근
-  //   useEffect(() => {
-  //   const bucket = firestore.collection("infos");
-
-  //   // bucket 콜렉션의 bucket_item 문서 삭제
-  //   bucket.doc(userInfo.id).delete();
-  // })
-  // console.log(userInfo.id);
-  const deleteInfo = async (event) => {
+  // firestore 데이터 삭제 부분
+  const deleteInfo = async () => {
     if (confirm('삭제하시겠습니까?')) {
       const todoRef = doc(db, 'infos', userInfo.id);
       await deleteDoc(todoRef);
+      navigate('/list');
     }
   };
 
-  const { company, goodBad, grow, introduce, like, motive, name, skill } =
+  const { company, goodBad, grow, introduce, like, motive, name, spec } =
     userInfo;
-  console.log(userInfo);
+
+  // 리덕스 사용
+  const dispetch = useDispatch();
+  const editDetail = () => {
+    dispetch({
+      type: 'EDIT_DETAIL',
+      payload: userInfo,
+    });
+  };
+
   return (
     <InnerBox>
       {/* my page 내용 */}
@@ -85,8 +98,8 @@ function Detail() {
             <dd>{name}</dd>
           </dl>
           <dl>
-            <dt>skill</dt>
-            <dd>{skill}</dd>
+            <dt>spec</dt>
+            <dd>{spec}</dd>
           </dl>
           <dl>
             <dt>Introduce</dt>
@@ -114,8 +127,29 @@ function Detail() {
           <dd>{goodBad}</dd>
         </dl>
       </WriteBox>
-      <button>수정</button>
-      <button onClick={deleteInfo}>삭제</button>
+
+      {/* 수정, 삭제 버튼 */}
+      <WriteBtn>
+        <button
+          onClick={() => {
+            editDetail();
+            navigate(`/editdetail/${userInfo.id}`);
+          }}
+          ref={editIdRef}
+        >
+          수정
+        </button>
+        <button onClick={deleteInfo} ref={deleteIdRef}>
+          삭제
+        </button>
+        <button
+          onClick={() => {
+            navigate('/list');
+          }}
+        >
+          이전페이지
+        </button>
+      </WriteBtn>
     </InnerBox>
   );
 }

@@ -1,8 +1,9 @@
 import { createStore } from 'redux';
 import { combineReducers } from 'redux';
+import editDetail from '../modules/DetailInfo';
 
 const rootReducer = combineReducers({
-  // 여기서 부터 추가 !!
+  editDetail,
 });
 
 const store = createStore(rootReducer);
