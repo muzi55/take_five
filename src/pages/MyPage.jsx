@@ -1,7 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { styled } from "styled-components";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  getDocs,
+  query,
+  where,
+  doc,
+} from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { decode } from "url-safe-base64";
@@ -17,45 +24,60 @@ function MyPage() {
   const userInfo = useSelector((state) => state.userInfo);
   const userWrite = useSelector((state) => state.userWrite);
   const userPhoto = useSelector((state) => state.userPhoto);
-  //로컬, 세션 스토리지를 이용한 새로고침 대응
 
   useEffect(() => {
-    onAuthStateChanged(auth, (users) => {
-      dispatch(getUserPhoto(users.photoURL));
-    });
-
-    const fetchData = async () => {
-      const dbUsers = query(
-        collection(db, "users"),
-        where("email", "==", atob(decode(params.id)))
-      );
-      const dbWrite = query(
-        collection(db, "infos"),
-        where("email", "==", atob(decode(params.id)))
-      );
-
-      const usersData = [];
-      const writeData = [];
-
-      const userSnapshot = await getDocs(dbUsers);
-      userSnapshot.forEach((doc) => {
-        usersData.push(doc.data());
-      });
-      dispatch(getUserInfo(...usersData));
-
-      const writeSnapshot = await getDocs(dbWrite);
-      writeSnapshot.forEach((doc) => {
-        writeData.push(doc.data());
-      });
-      dispatch(getUserWrite([...writeData]));
-    };
-    fetchData();
+    fetchUserData();
+    fetchInfoData();
   }, []);
 
+  onAuthStateChanged(auth, (users) => {
+    dispatch(getUserPhoto(users.photoURL));
+  });
+
+  const fetchUserData = async () => {
+    const dbUsers = query(
+      collection(db, "users"),
+      where("email", "==", atob(decode(params.id)))
+    );
+
+    const usersData = [];
+
+    const userSnapshot = await getDocs(dbUsers);
+    userSnapshot.forEach((doc) => {
+      usersData.push(doc.data());
+    });
+    dispatch(getUserInfo(...usersData));
+  };
+
+  const fetchInfoData = async () => {
+    const dbWrite = query(
+      collection(db, "infos"),
+      where("email", "==", atob(decode(params.id)))
+    );
+
+    const writeData = [];
+
+    const writeSnapshot = await getDocs(dbWrite);
+    writeSnapshot.forEach((doc) => {
+      writeData.push({ id: doc.id, ...doc.data() });
+    });
+    dispatch(getUserWrite([...writeData]));
+  };
+
   const logout = async (event) => {
-    event.preventDefault();
-    await signOut(auth);
-    navigate("/");
+    if (confirm("로그아웃 하시겠습니까?")) {
+      event.preventDefault();
+      await signOut(auth);
+      navigate("/");
+    }
+  };
+
+  const deleteWrite = async (id) => {
+    if (confirm("삭제 하시겠습니까?")) {
+      const writeRef = doc(db, "infos", id);
+      await deleteDoc(writeRef);
+      fetchInfoData();
+    }
   };
 
   return (
@@ -86,46 +108,22 @@ function MyPage() {
         </IntroBox>
         <WriteList>
           나의 게시물
-          <StList>
-            <ListTitle>
-              아무튼 그냥 테스트용 긴 텍스트
-              <ListBtn>♥</ListBtn>
-            </ListTitle>
-            <ListBtnBox>
-              <ListBtn onClick={() => navigate("/")}>수정</ListBtn>
-              <ListBtn>삭제</ListBtn>
-            </ListBtnBox>
-          </StList>
-          <StList>
-            <ListTitle>
-              text
-              <ListBtn>♥</ListBtn>
-            </ListTitle>
-            <ListBtnBox>
-              <ListBtn onClick={() => navigate("/")}>수정</ListBtn>
-              <ListBtn>삭제</ListBtn>
-            </ListBtnBox>
-          </StList>
-          <StList>
-            <ListTitle>
-              text
-              <ListBtn>♥</ListBtn>
-            </ListTitle>
-            <ListBtnBox>
-              <ListBtn onClick={() => navigate("/")}>수정</ListBtn>
-              <ListBtn>삭제</ListBtn>
-            </ListBtnBox>
-          </StList>
-          <StList>
-            <ListTitle>
-              text
-              <ListBtn>♥</ListBtn>
-            </ListTitle>
-            <ListBtnBox>
-              <ListBtn onClick={() => navigate("/")}>수정</ListBtn>
-              <ListBtn>삭제</ListBtn>
-            </ListBtnBox>
-          </StList>
+          {userWrite.map((obj) => {
+            return (
+              <StList key={obj.id}>
+                <ListTitle>
+                  {obj.email}
+                  <ListBtn>♥{obj.like}</ListBtn>
+                </ListTitle>
+                <ListBtnBox>
+                  <ListBtn onClick={() => navigate(`/editdetail/${obj.id}`)}>
+                    수정
+                  </ListBtn>
+                  <ListBtn onClick={() => deleteWrite(obj.id)}>삭제</ListBtn>
+                </ListBtnBox>
+              </StList>
+            );
+          })}
         </WriteList>
       </Container>
     </Layout>
