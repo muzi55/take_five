@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../App.css';
 import { styled } from 'styled-components';
-import { addDoc, collection, getDocs, query } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, query } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,7 +11,7 @@ export const InnerBox = styled.div`
   width: 1400px;
   margin: 120px auto;
 `;
-const WrtiteBox = styled.form`
+export const WriteBox = styled.form`
   overflow: hidden;
 
   & .applyCompany {
@@ -60,8 +60,14 @@ const WrtiteBox = styled.form`
     resize: none;
     padding: 10px;
   }
+`;
+
+//버튼 스타일 부분
+export const WriteBtn = styled.form`
+  margin-top: 60px;
+  text-align: center;
   & button {
-    display: block;
+    display: inline-block;
     width: 160px;
     height: 40px;
     background-color: #6c8383;
@@ -69,13 +75,11 @@ const WrtiteBox = styled.form`
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    margin: 0 auto;
-    margin-top: 60px;
+    margin: 0 20px;
   }
 `;
 
 function Write() {
-  // 💚 추후에 input 부분 리팩토링할 것
   // input value
   const navigate = useNavigate();
   const [infos, setInfos] = useState([]);
@@ -84,7 +88,7 @@ function Write() {
   const [grow, setGrow] = useState('');
   const [goodBad, setGoodBad] = useState('');
 
-  // const userEmail = auth.currentUser.email;
+  const userEmail = auth.currentUser.email;
 
   //유효성 검사 돔요소 접근
   const companyRef = useRef('');
@@ -97,7 +101,7 @@ function Write() {
     event.preventDefault();
 
     const newInfo = {
-      // email: userEmail,
+      email: userEmail,
       date: new Date(),
       company,
       motive,
@@ -144,10 +148,9 @@ function Write() {
       navigate('/list');
     }
   };
-
   return (
     <InnerBox>
-      <WrtiteBox onSubmit={addInfo}>
+      <WriteBox>
         <label className="applyCompany">
           본인이 지원하고자 하는 회사란?
           <textarea
@@ -184,9 +187,17 @@ function Write() {
             ref={goodBadRef}
           />
         </label>
-
-        <button>전송</button>
-      </WrtiteBox>
+        <WriteBtn>
+          <button
+            onClick={function () {
+              navigate('/list');
+            }}
+          >
+            이전
+          </button>
+          <button onClick={addInfo}>저장</button>
+        </WriteBtn>
+      </WriteBox>
     </InnerBox>
   );
 }

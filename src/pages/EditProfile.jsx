@@ -1,13 +1,26 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './../style/EditProfile.css';
 import { auth, db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { doc, updateDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+// import { onAuthStateChanged, updateProfile } from 'firebase/auth';
+// import { auth, storage } from '../firebase';
+// import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { collection, addDoc } from 'firebase/firestore';
 
 // const data = [{ id: 1, nickname: '닉네임', intro: '소개글', ability: '능력' }];
 
 function EditProfile() {
   //
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      // console.log(user.email); // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
+      console.log(user); // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
+    });
+  }, []);
+
   let [isInputClickedName, setIsInputClickedName] = useState(false);
   let [isInputClickedNick, setIsInputClickedNick] = useState(false);
   let [isInputClickedIntro, setIsInputClickedIntro] = useState(false);
@@ -201,6 +214,11 @@ function EditProfile() {
       <div className="buttonbox">
         <button
           className="finishbtn"
+<<<<<<< HEAD
+          onClick={() => {
+            navigate('/list');
+            console.log('버튼이 눌렸어 !!');
+=======
           onClick={async () => {
             try {
               const docRef = await addDoc(collection(db, 'users'), {
@@ -216,6 +234,7 @@ function EditProfile() {
             }
             alert('프로필이 저장되었습니다.🎉');
             navigate('/list');
+>>>>>>> dev
           }}
         >
           저장
