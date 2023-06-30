@@ -33,12 +33,9 @@ const List = () => {
     setLists(initialUsers);
     setUsers(initialInfos);
   };
-
   useEffect(() => {
     fetchData();
   }, []);
-
-  const openRef = useRef('');
 
   // 이건 밑으로 내려보내면 에러납니다
   // 위에 두는게 좋을거 같네여
@@ -57,8 +54,10 @@ const List = () => {
   `;
 
   // 토글 정렬
-
   // 중복된 값을 저지하는 함수이벤트입니다.
+  const sortItems = ['최신순', '인기순'];
+  const [state, setState] = useState('최신순');
+  const openRef = useRef('');
   const onSetState = (e) => {
     state === e
       ? (openRef.current.style.display = 'none')
@@ -66,10 +65,9 @@ const List = () => {
     changeUl.current = 'none';
   };
 
-  // toggle 정렬입니다.
+  // 클릭시 내용의 값이 바뀌는 함수입니다.
   const changeUl = useRef('none');
   const onClickListUl = () => {
-    // 여기서 redux 추가되야합니다.
     if (changeUl.current === 'none') {
       openRef.current.style.display = 'block';
       changeUl.current = 'block';
@@ -78,8 +76,6 @@ const List = () => {
       changeUl.current = 'none';
     }
   };
-
-  // 1
 
   // user와, info를 합친 객체를 배열로 반환합니다
   const newarr = [];
@@ -90,21 +86,17 @@ const List = () => {
   });
 
   // 인기순으로 정렬되어있는 함수입니다.
-  const popularList = [...newarr].sort((a, b) => {
-    if (a.like < b.like) return 1;
-    if (a.like > b.like) return -1;
-    return 0;
-  });
+  const popularList = [...newarr].sort((a, b) => b.date - a.date);
+  // const popularList = [...newarr].sort((a, b) => {
+  //   if (a.like < b.like) return 1;
+  //   if (a.like > b.like) return -1;
+  //   return 0;
+  // });
 
   // 최신순으로 정렬되어있는 함수입니다.
-  // like => date 로 값을 바꿔줘야합니다.
   // 현재 date값이 객체입니다. 이부분은 보안이 필요합니다.
   const newestList = [...newarr].sort((a, b) => a.date - b.date);
 
-  const sortItems = ['최신순', '인기순'];
-  const [state, setState] = useState('최신순');
-
-  console.log(state);
   return (
     <div>
       {/* <WritingForm>히히히</WritingForm> */}
@@ -128,7 +120,6 @@ const List = () => {
                 <li
                   key={index}
                   onClick={() => {
-                    console.log(1);
                     setState(item);
                     onClickListUl();
                   }}
