@@ -59,7 +59,7 @@ export const WriteBox = styled.form`
     border: none;
     resize: none;
     padding: 10px;
-  }s
+  }
 `;
 
 //버튼 스타일 부분
