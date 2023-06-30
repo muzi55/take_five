@@ -6,9 +6,7 @@ a:link {
   color: inherit;
   text-decoration: none;
 }
+
 .link {
-  color: #000;
-}
-.link:link {
   color: inherit;
 }
