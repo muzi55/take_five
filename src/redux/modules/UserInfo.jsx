@@ -1,5 +1,6 @@
 const GET_USER_INFO = "GET_USER_INFO";
 
+
 export const getUserInfo = (payload) => {
   return {
     type: GET_USER_INFO,

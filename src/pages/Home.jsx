@@ -1,120 +1,129 @@
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase";
-import { addDoc, collection } from "firebase/firestore";
-import { encode } from "url-safe-base64";
+import React, { useState, useEffect } from 'react';
+import * as H from '../style/HomeStyled';
+import { useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase';
+import { encode } from 'url-safe-base64';
 
 function Home() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
+      // console.log('user', user);
+    });
+  }, []);
+
+  //const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const emailHandler = (event) => {
-    setEmail(event.target.value);
-  };
-  const nicknameHandler = (event) => {
-    setNickname(event.target.value);
-  };
-  const passwordHandler = (event) => {
-    setPassword(event.target.value);
-  };
-  const nameHandler = (event) => {
-    setName(event.target.value);
-  };
-
-  const signUp = (event) => {
-    event.preventDefault();
-
-    if (email === "" || nickname === "" || password === "" || name === "")
-      return;
-
-    const userCredential = createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-    if (userCredential) alert("회원가입 성공");
-
-    const newUsers = {
-      email,
-      password,
-      nickname,
-      name,
-    };
-    const collectionRef = collection(db, "users");
-    addDoc(collectionRef, newUsers);
-
-    setEmail("");
-    setNickname("");
-    setPassword("");
-    setName("");
-  };
-
-  const logIn = async (event) => {
-    event.preventDefault();
-    // setPersistence(auth, browserLocalPersistence);
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const url = userCredential.user.email;
-      if (userCredential) navigate(`/mypage/${encode(btoa(url))}`);
-    } catch (error) {
-      const errorCode = error.code;
-      if (errorCode === "auth/invalid-email")
-        alert("이메일이 올바르지 않습니다.");
-      if (errorCode === "auth/missing-password")
-        alert("비밀번호를 작성해주세요");
-      if (errorCode === "auth/wrong-password")
-        alert("비밀번호가 일치하지 않습니다");
+  const onChange = (event) => {
+    const {
+      target: { name, value },
+    } = event;
+    if (name === 'email') {
+      setEmail(value);
+    }
+    if (name === 'password') {
+      setPassword(value);
     }
   };
 
   return (
-    <div>
-      Home
-      <br />
-      <form>
-        <input
-          type="text"
-          placeholder="이메일"
-          onChange={emailHandler}
-          value={email}
-        />
-        <input
-          type="text"
-          placeholder="닉네임"
-          onChange={nicknameHandler}
-          value={nickname}
-        />
-        <input
-          type="password"
-          placeholder="비밀번호"
-          onChange={passwordHandler}
-          value={password}
-        />
-        <input
-          type="text"
-          placeholder="이름"
-          onChange={nameHandler}
-          value={name}
-        />
-        <button onClick={signUp}>회원가입</button>
-        <button onClick={logIn}>로그인</button>
-      </form>
-      <br />
-      <button onClick={() => navigate("/mypage/:id")}>마이페이지</button>
-    </div>
+    <H.Grid>
+      <H.GlobalStyle />
+      <H.MainBox>
+        <div>
+          <H.TitleBig>자기 P</H.TitleBig>
+          <H.TitleSmall>ublic </H.TitleSmall>
+          <H.TitleBig>R</H.TitleBig>
+          <H.TitleSmall>elations </H.TitleSmall>
+          <H.TitleBig>actic</H.TitleBig>
+          <br />
+          <br />
+          <br />
+          <p>
+            자기 pr을 연습해보세요!
+            <br />
+            <br />
+            <br />
+            자기 자신을 스스로 다른 사람들에게 알리는 <br />
+            <br />
+            자기pr을 연습하기 위한 페이지입니다.
+            <br />
+            <br />
+            <br />
+            자신의 강점을 알고 소개하는 방법을 sns방식으로 터득할 수 있습니다.
+            <br />
+            <br />
+            한 단계 발전하기 위해 타인의 pr도 살펴보세요.
+            <br />
+            <br />
+          </p>
+        </div>
+      </H.MainBox>
+
+      {/* //메인페이지의 로그인창입니다. */}
+      <H.Login>
+        <H.Form>
+          Login
+          <div>
+            <H.Input
+              type="email"
+              placeholder="이메일"
+              value={email}
+              name="email"
+              onChange={onChange}
+            />
+
+            <br />
+            <H.Input
+              type="password"
+              placeholder="비밀번호"
+              value={password}
+              name="password"
+              onChange={onChange}
+            />
+          </div>
+          <div>
+            <H.SignButton
+              type="button"
+              onClick={() => {
+                navigate('/register');
+              }}
+            >
+              회원가입
+            </H.SignButton>
+            <H.LoginButton
+              type="submit"
+              onClick={async (event) => {
+                event.preventDefault();
+                if (!email || !password) {
+                  alert('빈칸을 채워주세요!');
+                } else {
+                  try {
+                    const userCredential = await signInWithEmailAndPassword(
+                      auth,
+                      email,
+                      password
+                    );
+                    const url = userCredential.user.email;
+                    navigate(`/mypage/${encode(btoa(url))}`);
+                    // navigate('/list');
+                  } catch (error) {
+                    console.error(error);
+                  }
+                }
+              }}
+            >
+              로그인
+            </H.LoginButton>
+          </div>
+        </H.Form>
+      </H.Login>
+    </H.Grid>
   );
 }
 
