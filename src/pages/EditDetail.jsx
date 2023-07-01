@@ -56,6 +56,7 @@ function EditDetail() {
       // firestore infos 데이터 수정
       if (confirm('수정하시겠습니까?')) {
         const infoRef = doc(db, 'infos', userInfo.id);
+        console.log(infoRef);
         await updateDoc(infoRef, newInfo);
 
         //다시 해당 detail 페이지로 이동
@@ -103,16 +104,15 @@ function EditDetail() {
             ref={goodBadRef}
           />
         </label>
-
-        <WriteBtn>
-          {/* navigate(-1)로 이전페이지 구현하고 싶었으나 오류나서 일단 해당 detail 페이지로 이동 */}
-          {/* <button onClick={() => navigate(-1)}>이전</button> */}
-          <button onClick={() => navigate(`/detail/${email}&${id}`)}>
-            이전
-          </button>
-          <button onClick={editInfo}>저장</button>
-        </WriteBtn>
       </WriteBox>
+      <WriteBtn>
+        {/* navigate(-1)로 이전페이지 구현하고 싶었으나 오류나서 일단 해당 detail 페이지로 이동 */}
+        <button onClick={() => navigate(-1)}>이전</button>
+        {/* <button onClick={() => navigate(`/detail/${email}&${id}`)}>
+            이전
+          </button> */}
+        <button onClick={editInfo}>저장</button>
+      </WriteBtn>
     </InnerBox>
   );
 }

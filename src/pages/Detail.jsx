@@ -10,28 +10,31 @@ import {
 import { auth, db } from '../firebase';
 import { InnerBox, WriteBtn } from './Write';
 import { MyInfo, WriteBox } from '../style/DetailStyled';
-
 import { useNavigate, useParams } from 'react-router-dom';
 import LikeImg from '../images/Like.svg';
-import { useDispatch } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserPhoto } from '../redux/modules/UserPhoto';
 import styled from 'styled-components';
-
+import { onAuthStateChanged } from 'firebase/auth';
 
 function Detail() {
   const navigate = useNavigate();
   const param = useParams();
   const paramEmail = param.email.split('&')[0];
   const paramId = param.email.split('&')[1];
+  const userPhoto = useSelector((state) => state.userPhoto);
+  const dispatch = useDispatch();
+
+  onAuthStateChanged(auth, (users) => {
+    dispatch(getUserPhoto(users.photoURL));
+  });
 
   const deleteIdRef = useRef('');
   const editIdRef = useRef('');
 
   const [userInfo, setUserInfo] = useState({});
 
-
   // firestore에서 infos, users 데이터 읽기
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,14 +55,13 @@ function Detail() {
       });
 
       const filterInfo = initialInfos.filter((info) => {
-        if (info.email === paramEmail) {
+        if (info.email === paramEmail && info.id === paramId) {
           return info;
         }
       });
       initialUsers.filter((user) => {
         if (user.email === paramEmail) {
           setUserInfo({ ...user, ...filterInfo[0] });
-          setInfo(filterInfo[0]);
         }
       });
 
@@ -75,21 +77,26 @@ function Detail() {
     fetchData();
   }, []);
 
-
   // firestore 데이터 삭제 부분
-  const { company, goodbad, grow, introduce, like, motive, name, spec } =
-    userInfo;
+  const {
+    company,
+    goodBad,
+    grow,
+    motive,
+    like,
+
+    introduce,
+    name,
+    spec,
+  } = userInfo;
 
   const deleteInfo = async (event) => {
-
     if (confirm('삭제하시겠습니까?')) {
       const todoRef = doc(db, 'infos', like);
       await deleteDoc(todoRef);
       navigate('/list');
     }
   };
-
-
 
   // 리덕스 사용
   const dispetch = useDispatch();
@@ -98,7 +105,7 @@ function Detail() {
       type: 'EDIT_DETAIL',
       payload: userInfo,
     });
-
+  };
   // 업데이트 부분
   const [render, setRender] = useState(like);
   const updateInfo = async (event) => {
@@ -119,10 +126,7 @@ function Detail() {
           {render}
           {like}
         </StLikeSpan>
-        <img
-          src="https://velog.velcdn.com/images/seul-bean/profile/259fe091-ca51-424b-bf1a-aca4da376a9c/social_profile.png"
-          alt="프로필 사진"
-        />
+        <img src={userPhoto ?? '/user.png'} alt="프로필 사진" />
         <div className="myInfo_text">
           <dl>
             <dt>Name</dt>
