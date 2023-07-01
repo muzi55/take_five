@@ -24,7 +24,7 @@ function MyPage() {
   const userInfo = useSelector((state) => state.userInfo);
   const userWrite = useSelector((state) => state.userWrite);
   const userPhoto = useSelector((state) => state.userPhoto);
-
+  console.log(userInfo);
   useEffect(() => {
     fetchUserData();
     fetchInfoData();
@@ -37,7 +37,7 @@ function MyPage() {
   const fetchUserData = async () => {
     const dbUsers = query(
       collection(db, 'users'),
-      where('email', '==', atob(decode(params.id)))
+      where('email', '==', atob(decode(params.email)))
     );
 
     const usersData = [];
@@ -52,7 +52,7 @@ function MyPage() {
   const fetchInfoData = async () => {
     const dbWrite = query(
       collection(db, 'infos'),
-      where('email', '==', atob(decode(params.id)))
+      where('email', '==', atob(decode(params.email)))
     );
 
     const writeData = [];
@@ -85,7 +85,7 @@ function MyPage() {
       <S.Nav>
         <S.NavBtn onClick={logout}>log out</S.NavBtn>
         <S.NavImgBtn
-          onClick={() => navigate(`/mypage/${encode(btoa(user.email))}`)}
+          onClick={() => navigate(`/mypage/${encode(btoa(userInfo.email))}`)}
         >
           <S.NavImg src={userPhoto ?? '/user.png'} alt="" />
         </S.NavImgBtn>
@@ -93,7 +93,9 @@ function MyPage() {
       <S.Container>
         <S.ProfileImg>
           <S.EditBtn
-            onClick={() => navigate(`/editprofile/${encode(btoa(user.email))}`)}
+            onClick={() =>
+              navigate(`/editprofile/${encode(btoa(userInfo.email))}`)
+            }
           >
             <img src="" alt="" />
           </S.EditBtn>
@@ -101,7 +103,7 @@ function MyPage() {
           <S.Profile>프로필</S.Profile>
         </S.ProfileImg>
         <S.NickNameBox>
-          {userInfo.nickname}
+          {userInfo.nickName}
           <br />
           나의 게시물 수 : {userWrite.length} / 게시물 좋아요 수 : ♥{' '}
           {userWrite.map((obj) => Number(obj.like)).reduce((a, b) => a + b, 0)}

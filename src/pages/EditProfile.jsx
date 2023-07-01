@@ -1,41 +1,65 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './../style/EditProfile.css';
 import { auth, db } from '../firebase';
-import { useNavigate } from 'react-router-dom';
-import { doc, updateDoc } from 'firebase/firestore';
-import { auth, db } from '../firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  doc,
+  updateDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from 'firebase/firestore';
+import { onAuthStateChanged, updateProfile } from 'firebase/auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserInfo } from '../redux/modules/UserInfo';
+import { decode } from 'url-safe-base64';
 // import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 // import { auth, storage } from '../firebase';
 // import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { collection, addDoc } from 'firebase/firestore';
 
 // const data = [{ id: 1, nickname: '닉네임', intro: '소개글', ability: '능력' }];
 
 function EditProfile() {
-  //
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      // console.log(user.email); // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
-      console.log(user); // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
-    });
-  }, []);
-
   let [isInputClickedName, setIsInputClickedName] = useState(false);
   let [isInputClickedNick, setIsInputClickedNick] = useState(false);
   let [isInputClickedIntro, setIsInputClickedIntro] = useState(false);
   let [isInputClickedSpec, setIsInputClickedSpec] = useState(false);
 
   const [name, setName] = useState('');
-  const [nickname, setNickName] = useState('');
-  const [intro, setIntro] = useState('');
+  const [nickName, setNickName] = useState('');
+  const [introduce, setIntroduce] = useState('');
   const [spec, setSpec] = useState('');
-
-  const [imgFile, setImgFile] = useState('');
+  // const [imgFile, setImgFile] = useState('');
+  const [imgFile, setImgFile] = useState(null);
   const imgRef = useRef();
-
+  const params = useParams();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.userInfo);
+  //
+  useEffect(() => {
+    onAuthStateChanged(auth, (users) => {
+      // console.log(user.email); // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
+      console.log(users); // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
+    });
+    fetchUserData();
+  }, []);
   //
 
+  const fetchUserData = async () => {
+    const dbUsers = query(
+      collection(db, 'users'),
+      where('email', '==', atob(decode(params.email)))
+    );
+
+    const usersData = [];
+
+    const userSnapshot = await getDocs(dbUsers);
+    userSnapshot.forEach((doc) => {
+      usersData.push({ id: doc.id });
+    });
+    dispatch(getUserInfo(...usersData));
+  };
   // const updateUser = async (userId, newData) => {
   //   try {
   //     const userRef = db.collection('users').doc(userId);
@@ -57,7 +81,7 @@ function EditProfile() {
   };
 
   const saveIntro = (event) => {
-    setIntro(event.target.value);
+    setIntroduce(event.target.value);
   };
 
   const saveSpec = (event) => {
@@ -67,7 +91,7 @@ function EditProfile() {
   //
 
   // 이미지 업로드 input의 onChange
-  const saveImgFile = () => {
+  const saveImgFile = async () => {
     const file = imgRef.current.files[0];
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -120,6 +144,7 @@ function EditProfile() {
             <input
               id="deleteprofileImg"
               type="button"
+              up
               onClick={deleteImg}
             ></input>
           </div>
@@ -164,7 +189,7 @@ function EditProfile() {
                 isInputClickedNick === true ? '' : '닉네임을 입력해주세요.'
               }
               type="text"
-              value={nickname}
+              value={nickName}
               onChange={saveNickName}
             ></input>
           </div>
@@ -184,7 +209,7 @@ function EditProfile() {
                 isInputClickedIntro === true ? '' : '소개글을 입력해주세요.'
               }
               type="text"
-              value={intro}
+              value={introduce}
               onChange={saveIntro}
             ></input>
           </div>
@@ -214,32 +239,36 @@ function EditProfile() {
       <div className="buttonbox">
         <button
           className="finishbtn"
-<<<<<<< HEAD
-          onClick={() => {
-            navigate('/list');
-            console.log('버튼이 눌렸어 !!');
-=======
           onClick={async () => {
             try {
-              const docRef = await addDoc(collection(db, 'users'), {
+              const updateInfoRef = doc(db, 'users', user.id);
+              await updateDoc(updateInfoRef, {
                 name,
-                nickname,
-                intro,
+                nickName,
+                introduce,
                 spec,
-                imgFile,
               });
-              console.log('Document written with ID: ', docRef.id);
+
+              // const docRef = await addDoc(
+              //   collection(db, 'users'),
+              //   {
+              //     email: email,
+              //     name,
+              //     nickName,
+              //     introduce,
+              //     spec,
+              //
+              //   }
+              // );
+              console.log('Document written with ID: ', updateInfoRef.id);
             } catch (e) {
               console.error('Error adding document: ', e);
             }
             alert('프로필이 저장되었습니다.🎉');
             navigate('/list');
->>>>>>> dev
           }}
         >
           저장
-          {/* zxc123@zxc123.com */}
-          {/* zxczxc123! */}
         </button>
         {/* 일단 보류 */}
         {/* <button

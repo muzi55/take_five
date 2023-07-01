@@ -3,7 +3,6 @@ import * as H from '../style/HomeStyled';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
-// import { encode } from 'url-safe-base64';
 import { useSelector, useDispatch } from 'react-redux';
 
 function Home() {

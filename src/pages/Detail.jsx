@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   collection,
   deleteDoc,
@@ -7,27 +7,37 @@ import {
   query,
   updateDoc,
 } from 'firebase/firestore';
-
-import { db } from '../firebase';
-import { InnerBox } from './Write';
+import { auth, db } from '../firebase';
+import { InnerBox, WriteBtn } from './Write';
 import { MyInfo, WriteBox } from '../style/DetailStyled';
-
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import LikeImg from '../images/Like.svg';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserPhoto } from '../redux/modules/UserPhoto';
 import styled from 'styled-components';
+import { onAuthStateChanged } from 'firebase/auth';
 
 function Detail() {
+  const navigate = useNavigate();
   const param = useParams();
   const paramEmail = param.email.split('&')[0];
   const paramId = param.email.split('&')[1];
+  const userPhoto = useSelector((state) => state.userPhoto);
+  const dispatch = useDispatch();
+
+  onAuthStateChanged(auth, (users) => {
+    dispatch(getUserPhoto(users.photoURL));
+  });
+
+  const deleteIdRef = useRef('');
+  const editIdRef = useRef('');
 
   const [userInfo, setUserInfo] = useState({});
-  const [info, setInfo] = useState({});
 
-  // 데이터 읽기 -----------------------------------------------------
+  // firestore에서 infos, users 데이터 읽기
+
   useEffect(() => {
     const fetchData = async () => {
-      // collection 이름이 todos인 collection의 모든 document를 가져옵니다.
       const dbInfos = query(collection(db, 'infos'));
       const dbUsers = query(collection(db, 'users'));
 
@@ -37,9 +47,6 @@ function Detail() {
       const initialInfos = [];
       const initialUsers = [];
 
-      // document의 id와 데이터를 initialTodos에 저장합니다.
-      // doc.id의 경우 따로 지정하지 않는 한 자동으로 생성되는 id입니다.
-      // doc.data()를 실행하면 해당 document의 데이터를 가져올 수 있습니다.
       querySnapshotInfo.forEach((doc) => {
         initialInfos.push({ id: doc.id, ...doc.data() });
       });
@@ -48,30 +55,57 @@ function Detail() {
       });
 
       const filterInfo = initialInfos.filter((info) => {
-        if (info.email === paramEmail) {
+        if (info.email === paramEmail && info.id === paramId) {
           return info;
         }
       });
       initialUsers.filter((user) => {
         if (user.email === paramEmail) {
           setUserInfo({ ...user, ...filterInfo[0] });
-          setInfo(filterInfo[0]);
         }
       });
+
+      const userEmail = auth.currentUser.email;
+      if (userEmail !== paramEmail) {
+        deleteIdRef.current.style.display = 'none';
+        editIdRef.current.style.display = 'none';
+      } else {
+        deleteIdRef.current.style.display = 'inline-block';
+        editIdRef.current.style.display = 'inline-block';
+      }
     };
     fetchData();
   }, []);
 
-  const { company, goodbad, grow, introduce, like, motive, name, spec } =
-    userInfo;
+  // firestore 데이터 삭제 부분
+  const {
+    company,
+    goodBad,
+    grow,
+    motive,
+    like,
+
+    introduce,
+    name,
+    spec,
+  } = userInfo;
 
   const deleteInfo = async (event) => {
     if (confirm('삭제하시겠습니까?')) {
       const todoRef = doc(db, 'infos', like);
       await deleteDoc(todoRef);
+      navigate('/list');
     }
   };
 
+  // 리덕스 사용
+  const dispetch = useDispatch();
+  const editDetail = () => {
+    dispetch({
+      type: 'EDIT_DETAIL',
+      payload: userInfo,
+    });
+  };
   // 업데이트 부분
   const [render, setRender] = useState(like);
   const updateInfo = async (event) => {
@@ -92,10 +126,7 @@ function Detail() {
           {render}
           {like}
         </StLikeSpan>
-        <img
-          src="https://velog.velcdn.com/images/seul-bean/profile/259fe091-ca51-424b-bf1a-aca4da376a9c/social_profile.png"
-          alt="프로필 사진"
-        />
+        <img src={userPhoto ?? '/user.png'} alt="프로필 사진" />
         <div className="myInfo_text">
           <dl>
             <dt>Name</dt>
@@ -131,8 +162,29 @@ function Detail() {
           <dd>{goodBad}</dd>
         </dl>
       </WriteBox>
-      <button>수정</button>
-      <button onClick={deleteInfo}>삭제</button>
+
+      {/* 수정, 삭제 버튼 */}
+      <WriteBtn>
+        <button
+          onClick={() => {
+            editDetail();
+            navigate(`/editdetail/${userInfo.id}`);
+          }}
+          ref={editIdRef}
+        >
+          수정
+        </button>
+        <button onClick={deleteInfo} ref={deleteIdRef}>
+          삭제
+        </button>
+        <button
+          onClick={() => {
+            navigate('/list');
+          }}
+        >
+          이전페이지
+        </button>
+      </WriteBtn>
     </InnerBox>
   );
 }

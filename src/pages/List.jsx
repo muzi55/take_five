@@ -1,17 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { collection, getDocs, query } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 import ListItem from '../components/ListItem';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { encode } from 'url-safe-base64';
 import img from './../images/wirteBtn.svg';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const List = () => {
   const navigate = useNavigate();
   const [lists, setLists] = useState([]);
   const [users, setUsers] = useState([]);
+  const [authUser, setAuthUser] = useState('');
 
+  useEffect(() => {
+    onAuthStateChanged(auth, (users) => {
+      setAuthUser(users);
+    });
+  }, []);
   const fetchData = async () => {
     // collection 이름이 todos인 collection의 모든 document를 가져옵니다.
     const qusers = query(collection(db, 'users'));
@@ -100,6 +107,11 @@ const List = () => {
 
   return (
     <div>
+      <button
+        onClick={() => navigate(`/mypage/${encode(btoa(authUser.email))}`)}
+      >
+        마이페이지
+      </button>
       {/* <WritingForm>히히히</WritingForm> */}
       <StWirteBtn action="#" onSubmit={(e) => e.preventDefault()}>
         {/* <Link to="/write"> */}
