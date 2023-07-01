@@ -3,33 +3,52 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import LikeImg from '../images/Like.svg';
 import userDefault from '../images/userDefault.svg';
+import './../style/SkeletonUi.css';
+import heart from '../images/heart_.svg';
 const ListItem = ({ lists }) => {
+  const imgLike = 'https://i.postimg.cc/59qL9m7h/jordy4.webp';
   return (
     <>
-      {lists
-        ? lists.map((list, index) => {
-            const {
-              imgFile,
-              name,
-              email,
-              company,
-              introduce,
-              spec,
-              like,
-              id,
-            } = list;
+      {
+        // 스켈레톤UI 조건입니다.
+        // 화면에 lists.legnth 의 값이 1 이상이면  firestore에서 가져온 값을 뿌려주며,
+        // lists.legnth 값이 1보다 작다면, 즉 값이 없다면? => 스켈레톤Ui를 뿌려줍니다.
 
-            // Hash는 다른곳에서 받아와야합니다.
-            // id 말고, 다른 대체수단이 필요할 듯 싶다. 글을 쓸 시 => 새롭게 받아오는 글 고유의 id
-            // date값을 받아와서, 정렬할 수 있는 수단이 필요할 거 같다.
+        // 스켈레톤 UI의 핵심 아이디어는 사용자가 콘텐츠가 로드되고 있는지 알 수 있도록
+        // 시각적인 힌트를 제공하는 것입니다.
+
+        // 스켈레톤UI는 사용자에게 로딩진행 상태를 시각적으로 전달해
+        // 사용자 경험을 향상시키고, 사용자들이 애플리케이션을 긍정적으로
+        // 인식할 수 있게 됩니다.
+
+        // 데이터 로드 자체가 빠르거나, skeleton UI가 필요하지 않는 경우는 null 체크를 사용하여 뎅이터가
+        // 없을때 대체 내용을 표시할 수 있습니다. !
+
+        // 스켈레톤의 장단점
+        // 장점은 스켈레톤은 블랭크 페이지 < 스피너 < 스켈레톤 순서대로 더 빠르다고 느껴지고,
+        // 단점은 스켈레톤을 화면마다 표시해야 되기 때문에 상대적으로 시간이나 비용이 더 듭니다.
+
+        // 이 null check방법은 바꿔야 할 거 같습니다.
+        // legnth의 값이 1과 같거나 크다면? =>  이부분은 나중에 리스트의 글이 없다면
+        // 계속 스켈레톤 이미지를 보여주는상황인게 문제입니다.
+
+        // 더 나은 경험을 위한 스켈레톤 규칙
+        // 스켈레톤은 콘텐츠의 로드를 방해하면 안됩니다. => 실제 콘텐츠는 데이터를 기용할 수 있는 시점이 되면 즉시 스켈레톤을 대체해야합니다.
+        // 스켈레톤을 디자인 할 때 애니메이션을 사용하는 것이 좋습니다. => 애니메이션은 wave, pulse 중 wave를 사용하는것이 로딩이 더 짧다고 느껴집니다.
+        // 느리고 안정된 애니메이션을 사용하는것이 로딩 시간을 더 짧게 느끼게끔 합니다.
+        lists.length >= 1 ? (
+          lists.map((list, index) => {
+            const { imgFile, name, email, company, introduce, spec, like, id } =
+              list;
+
             return (
               // key={index} 여기 수정해야합니다.
               <StListItem key={index}>
                 <Link className="link" to={`/detail/${email}&${id}`}>
-                  <StLikeSpan>
-                    <img src={LikeImg} alt="하트모양 이미지" /> : {like}
-                  </StLikeSpan>
                   <StListImgBox className="list-img-box">
+                    {/* firestore에 프로필 이미지가 있다면? 
+                    그 이미지를 사용하고, 
+                    없다면 기본 이미지를 사용합니다. */}
                     {imgFile ? (
                       <img src={imgFile} alt="프로필 사진입니다" />
                     ) : (
@@ -37,6 +56,14 @@ const ListItem = ({ lists }) => {
                     )}
                   </StListImgBox>
                   <StListTextBox className="list-text-box">
+                    <StLikeSpan>
+                      <span>{like}</span>
+                      {/* 좋아요가 1이상인 경우 속이 찬 하트로 보여짐 */}
+                      <img
+                        src={like > 0 ? heart : LikeImg}
+                        alt="하트모양 이미지"
+                      />
+                    </StLikeSpan>
                     <StHeading3>{name}</StHeading3>
                     <StListTextP>{company}</StListTextP>
                     <StListTextP opacity="0.8">{introduce}</StListTextP>
@@ -48,49 +75,75 @@ const ListItem = ({ lists }) => {
               </StListItem>
             );
           })
-        : null}
+        ) : (
+          //
+          // SkeletonUI 부분
+          //
+          // null Checking으로도 문제는없지만 null을 띄워주면,
+          // 화면에 아무것도 보이지 않으므로 사용자경험을 해칠 우려가 있습니다.
+          <SkeletonUi>
+            <img src={imgLike} alt="로딩중" />
+          </SkeletonUi>
+        )
+      }
     </>
   );
 };
 export default ListItem;
 const StLikeSpan = styled.span`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: absolute;
-  bottom: 7.5rem;
-  right: 4rem;
+  top: 0;
+  right: 40px;
+  font-size: 20px;
+  font-weight: bold;
   z-index: 10;
+  & img {
+    margin-left: 10px;
+    width: 31px;
+  }
 `;
 const StListImgBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 15rem;
-  margin-bottom: 10px;
+  margin-top: 62px;
+  margin-bottom: 15px;
   overflow: hidden;
+
   & > img {
     display: block;
-    width: 90%;
+    width: auto;
   }
 `;
 const StListTextBox = styled.div`
+  position: relative;
+  padding: 0 40px;
   & p {
     font-size: 1rem;
   }
 `;
 const StListTextP = styled.p`
   opacity: ${(props) => props.opacity || '1'};
-  margin-top: 10px;
   &:last-child {
     margin-top: 34px;
+    padding-bottom: 22px;
   }
 `;
 const StListItem = styled.li`
+  margin: 0 auto;
   position: relative;
-  width: 19.375rem;
   box-sizing: border-box;
   overflow: hidden;
-  padding: 38px 28px;
+  background: #fff;
+  border-radius: 5px;
   border: 1px solid #464646;
   margin-bottom: 15px;
+  width: 346px;
+
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
   transition: all 0.3s;
   &:hover {
@@ -101,4 +154,15 @@ const StHeading3 = styled.h3`
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 10px;
+`;
+
+const SkeletonUi = styled.div`
+  display: flex;
+  width: 1086px;
+  height: 500px;
+  justify-content: center;
+  align-items: center;
+  & img {
+    display: block;
+  }
 `;
