@@ -6,7 +6,6 @@ import userDefault from '../images/userDefault.svg';
 import './../style/SkeletonUi.css';
 import heart from '../images/heart_.svg';
 const ListItem = ({ lists }) => {
-  // 이 방법으로도 null ckeking 이 되는거같습니다.
   const imgLike = 'https://i.postimg.cc/59qL9m7h/jordy4.webp';
   return (
     <>
@@ -100,8 +99,6 @@ const StLikeSpan = styled.span`
   right: 40px;
   font-size: 20px;
   font-weight: bold;
-  /* bottom: 7.5rem; */
-  /* right: 4rem; */
   z-index: 10;
   & img {
     margin-left: 10px;
@@ -143,8 +140,6 @@ const StListItem = styled.li`
   overflow: hidden;
   background: #fff;
   border-radius: 5px;
-  /* padding: 38px 28px; */
-
   border: 1px solid #464646;
   margin-bottom: 15px;
   width: 346px;

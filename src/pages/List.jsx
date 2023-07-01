@@ -135,24 +135,12 @@ const List = () => {
 
 export default React.memo(List);
 
-// 주요 변경 사항:
-
-// fetchData 함수에 useCallback 훅을 적용하여 콜백이 재생성되지 않도록 합니다.
-// sortItems 배열을 useMemo 훅을 사용하여 초기화합니다.
-// openRef와 changeUl을 useRef 훅으로 변경합니다.
-// onClickListUl 함수에 useCallback 훅을 적용하여 콜백이 재생성되지 않도록 합니다.
-// mergeUserAndList 배열을 useMemo 훅을 사용하여 초기화합니다.
-// popularList와 newestList 배열을 useMemo 훅을 사용하여 초기화합니다.
-// List 컴포넌트를 react.memo로 감싸서 변경되지 않는 경우에만 리렌더링되도록 합니다.
-// 이러한 최적화를 통해 불필요한 재렌더링을 방지하고 성능을 향상시킬 수 있습니다. 그러나 최적화를 적용할 때는 항상 성능 측정을 통해 실제 향상을 확인하는 것이 중요합니다.
-
 const BGCOLORONE = '#6C8383';
 const BGCOLORTWO = '#92A29C';
 const StListSection = styled.section`
   position: relative;
   margin: 2.5rem auto 0;
   box-sizing: border-box;
-  /* background: ${BGCOLORONE}; */
   width: 1086px;
   & h2 {
     position: absolute;
@@ -202,8 +190,7 @@ const StWirteBtn = styled.form`
     border-radius: ${btnWidth};
     border: 1px solid #000 !important;
     border: none;
-    /* transition: width 0.3s; */
-    transition: width 0.3s;
+    transition: all 0.3s;
     &:hover {
       width: ${transitionWidth};
     }
