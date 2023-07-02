@@ -6,6 +6,7 @@ import userDefault from '../images/userDefault.svg';
 import './../style/SkeletonUi.css';
 import heart from '../images/heart_.svg';
 import { encode } from 'url-safe-base64';
+import loading from '../images/loading.gif';
 
 const ListItem = ({ lists }) => {
   const imgLike = 'https://i.postimg.cc/59qL9m7h/jordy4.webp';
@@ -50,9 +51,6 @@ const ListItem = ({ lists }) => {
                   className="link"
                   to={`/detail/${encode(btoa(email))}&${id}`}
                 >
-                  <StLikeSpan>
-                    <img src={LikeImg} alt="하트모양 이미지" /> : {like}
-                  </StLikeSpan>
                   <StListImgBox className="list-img-box">
                     {/* firestore에 프로필 이미지가 있다면? 
                     그 이미지를 사용하고, 
@@ -90,7 +88,33 @@ const ListItem = ({ lists }) => {
           // null Checking으로도 문제는없지만 null을 띄워주면,
           // 화면에 아무것도 보이지 않으므로 사용자경험을 해칠 우려가 있습니다.
           <SkeletonUi>
-            <img src={imgLike} alt="로딩중" />
+            {/* <img src={imgLike} alt="로딩중" /> */}
+            {/* <img src={loading} alt="로딩중" />
+             */}
+            <div class="loding">
+              <svg width="300" height="300" viewBox="0 0 50 50">
+                <path
+                  opacity="0.2"
+                  d="M25,2.784C12.73,2.784,2.783,12.73,2.783,25S12.73,47.217,25,47.217S47.217,37.27,47.217,25
+	S37.27,2.784,25,2.784z M25,45.161C13.866,45.161,4.839,36.135,4.839,25C4.839,13.866,13.866,4.839,25,4.839
+	c11.134,0,20.161,9.026,20.161,20.161C45.161,36.135,36.134,45.161,25,45.161z"
+                />
+                <path
+                  fill="#2af598"
+                  d="M25.029,4.841c1.532,0.002,3.018,0.189,4.452,0.516l0.456-2.015c-1.579-0.359-3.22-0.555-4.908-0.557V4.841z"
+                >
+                  <animateTransform
+                    attributeType="xml"
+                    attributeName="transform"
+                    type="rotate"
+                    from="0 25 25"
+                    to="360 25 25"
+                    dur="0.8s"
+                    repeatCount="indefinite"
+                  />
+                </path>
+              </svg>
+            </div>
           </SkeletonUi>
         )
       }
@@ -118,8 +142,8 @@ const StListImgBox = styled.div`
   justify-content: center;
   align-items: center;
   height: 15rem;
-  margin-top: 62px;
-  margin-bottom: 15px;
+  margin-top: 30px;
+  margin-bottom: 20px;
   overflow: hidden;
 
   & > img {
@@ -137,7 +161,7 @@ const StListTextBox = styled.div`
 const StListTextP = styled.p`
   opacity: ${(props) => props.opacity || '1'};
   &:last-child {
-    margin-top: 34px;
+    margin-top: 20px;
     padding-bottom: 22px;
   }
 `;

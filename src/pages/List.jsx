@@ -55,14 +55,15 @@ const List = () => {
   const StListUl = styled.ul`
     display: none;
     text-align: left;
-    width: 150px;
+    width: 110px;
     margin-top: 5px;
     background: #fff;
-    padding: 10px;
+    text-align: center;
+    border: 1px solid #000;
     & li {
-      border: 1px solid #000;
-      padding: 0.725rem;
+      padding: 0.725rem 1.5rem;
       cursor: pointer;
+      border-bottom: 1px solid #000;
     }
   `;
 
@@ -145,6 +146,7 @@ const List = () => {
     ? profileImg
     : '/user.png';
   console.log(comparisonUserImg);
+  console.log(userInfo);
   return (
     <div>
       <S.Nav>
@@ -206,12 +208,15 @@ const BGCOLORONE = '#6C8383';
 const BGCOLORTWO = '#92A29C';
 const StListSection = styled.section`
   position: relative;
-  width: 1400px;
+  width: 1086px;
   margin: 2.5rem auto 0;
   box-sizing: border-box;
-  padding: 2.5rem 1.875rem 1.25rem;
-  background: ${BGCOLORONE};
+  padding: 1rem 1.875rem 1.25rem;
   & h2 {
+    position:absolute;
+    top:-9999px;
+    left:-9999px;
+    text-indent : -9999px
     font-size: 1.4rem;
   }
 `;
@@ -219,29 +224,33 @@ const StListSection = styled.section`
 const StListGridBox = styled.ul`
   position: relative;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   /* grid-template-rows: repeat(3, 1fr); */
 `;
 
-const StListPosition = styled.div`
-  position: relative;
-`;
 const StListbox = styled.div`
-  background-color: ${BGCOLORTWO};
-  padding: 3.125rem 1.25rem 1.25rem;
+  width: 1086px;
+  margin: 0 auto;
+  padding-top: 84px;
+  border-top: 1px solid #fff;
 `;
 const StSortBox = styled.div`
   text-align: right;
   position: absolute;
-  top: 2rem;
-  right: 50px;
+  text-align: center;
+  top: -8px;
+  right: 0;
   z-index: 20;
+  width: 110px;
+  font-size: 20px;
   cursor: pointer;
 `;
 const btnColor = '#92a29c';
 const btnWidth = '3.5rem';
 const transitionWidth = '13.4375rem';
 const StWirteBtn = styled.form`
+  margin: 0 auto;
+  width: 1086px;
   margin-top: 2.75rem;
   display: flex;
   justify-content: center;
@@ -250,9 +259,9 @@ const StWirteBtn = styled.form`
   & button {
     width: ${btnWidth};
     height: ${btnWidth};
-    background-color: ${btnColor};
+    background-color: #fff;
     border-radius: ${btnWidth};
-    border: none;
+    border: 1px solid #000;
     transition: width 0.3s;
     &:hover {
       width: ${transitionWidth};
