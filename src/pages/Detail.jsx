@@ -88,6 +88,7 @@ function Detail() {
     introduce,
     name,
     spec,
+    imgFile,
   } = userInfo;
 
   const deleteInfo = async (event) => {
@@ -126,7 +127,7 @@ function Detail() {
           {render}
           {like}
         </StLikeSpan>
-        <img src={userPhoto ?? '/user.png'} alt="프로필 사진" />
+        <img src={imgFile ?? '/user.png'} alt="프로필 사진" />
         <div className="myInfo_text">
           <dl>
             <dt>Name</dt>

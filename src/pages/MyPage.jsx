@@ -83,11 +83,14 @@ function MyPage() {
   return (
     <S.Layout>
       <S.Nav>
+        <S.NavImgBtn onClick={() => navigate(`/list`)}>
+          뉴스 피드 가기
+        </S.NavImgBtn>
         <S.NavBtn onClick={logout}>log out</S.NavBtn>
         <S.NavImgBtn
           onClick={() => navigate(`/mypage/${encode(btoa(userInfo.email))}`)}
         >
-          <S.NavImg src={userPhoto ?? '/user.png'} alt="" />
+          <S.NavImg src={userInfo.imgFile ?? '/user.png'} alt="" />
         </S.NavImgBtn>
       </S.Nav>
       <S.Container>
@@ -99,7 +102,7 @@ function MyPage() {
           >
             <img src="" alt="" />
           </S.EditBtn>
-          <S.Img src={userPhoto ?? '/user.png'} alt="" />
+          <S.Img src={userInfo.imgFile ?? '/user.png'} alt="" />
           <S.Profile>프로필</S.Profile>
         </S.ProfileImg>
         <S.NickNameBox>

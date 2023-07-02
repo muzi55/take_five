@@ -5,6 +5,7 @@ import Write from '../pages/Write';
 import Detail from '../pages/Detail';
 import MyPage from '../pages/MyPage';
 import EditProfile from '../pages/EditProfile';
+import AddProfile from '../pages/AddProfile';
 import Register from '../pages/Register';
 import EditDetail from '../pages/EditDetail';
 
@@ -21,6 +22,7 @@ const Router = () => {
         <Route path="/detail/:email" element={<Detail />} />
         <Route path="/mypage/:email" element={<MyPage />} />
         <Route path="/editprofile/:email" element={<EditProfile />} />
+        <Route path="/addprofile" element={<AddProfile />} />
       </Routes>
     </BrowserRouter>
   );
