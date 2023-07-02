@@ -1,5 +1,4 @@
-const GET_USER_WRITE = "GET_USER_WRITE";
-const DELETE_USER_WRITE = "DELETE_USER_WRITE";
+const GET_USER_WRITE = 'GET_USER_WRITE';
 
 export const getUserWrite = (payload) => {
   return {

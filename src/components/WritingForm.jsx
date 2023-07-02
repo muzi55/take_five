@@ -7,11 +7,9 @@ function WritingForm() {
   const navigate = useNavigate();
   return (
     <StWirteBtn action="#" onSubmit={(e) => e.preventDefault()}>
-      {/* <Link to="/write"> */}
       <button onClick={() => navigate('/write')}>
         <img src={img} alt="글쓰기 버튼 이미지" />
       </button>
-      {/* </Link> */}
     </StWirteBtn>
   );
 }

@@ -1,17 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { collection, getDocs, query } from 'firebase/firestore';
-import { db } from '../firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db, auth } from '../firebase';
 import ListItem from '../components/ListItem';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { encode } from 'url-safe-base64';
 import img from './../images/wirteBtn.svg';
+import * as S from '../style/MypageStyled';
+import { useSelector } from 'react-redux';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 const List = () => {
   const navigate = useNavigate();
   const [lists, setLists] = useState([]);
   const [users, setUsers] = useState([]);
+  const [authUser, setAuthUser] = useState('');
 
+  useEffect(() => {
+    onAuthStateChanged(auth, (users) => {
+      setAuthUser(users);
+    });
+  }, []);
   const fetchData = async () => {
     // collection 이름이 todos인 collection의 모든 document를 가져옵니다.
     const qusers = query(collection(db, 'users'));
@@ -42,14 +51,15 @@ const List = () => {
   const StListUl = styled.ul`
     display: none;
     text-align: left;
-    width: 150px;
+    width: 110px;
     margin-top: 5px;
     background: #fff;
-    padding: 10px;
+    text-align: center;
+    border: 1px solid #000;
     & li {
-      border: 1px solid #000;
-      padding: 0.725rem;
+      padding: 0.725rem 1.5rem;
       cursor: pointer;
+      border-bottom: 1px solid #000;
     }
   `;
 
@@ -87,26 +97,57 @@ const List = () => {
   });
 
   // 인기순으로 정렬되어있는 함수입니다.
-  const popularList = [...newarr].sort((a, b) => b.date - a.date);
-  // const popularList = [...newarr].sort((a, b) => {
-  //   if (a.like < b.like) return 1;
-  //   if (a.like > b.like) return -1;
-  //   return 0;
-  // });
+  const popularList = [...newarr].sort((a, b) => b.like - a.like);
 
   // 최신순으로 정렬되어있는 함수입니다.
   // 현재 date값이 객체입니다. 이부분은 보안이 필요합니다.
-  const newestList = [...newarr].sort((a, b) => a.date - b.date);
+  const newestList = [...newarr].sort((a, b) => b.date - a.date);
+
+  //
+  // 헤더 부분
+  // 로그인 버튼 클릭시 email값을 리덕스로 받아옵니다.
+  const userEmail = useSelector((state) => state.loginsubmit);
+  onAuthStateChanged(auth, (users) => {});
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+  const fetchUserData = async () => {
+    const dbUsers = query(
+      collection(db, 'users'),
+      where('email', '==', userEmail)
+    );
+
+    const usersData = [];
+
+    const userSnapshot = await getDocs(dbUsers);
+    userSnapshot.forEach((doc) => {
+      usersData.push(doc.data());
+    });
+  };
+
+  const logout = async (event) => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      event.preventDefault();
+      await signOut(auth);
+      navigate('/');
+    }
+  };
 
   return (
     <div>
-      {/* <WritingForm>히히히</WritingForm> */}
+      <S.Nav>
+        <S.NavBtn onClick={logout}>log out</S.NavBtn>
+        <S.NavBtn
+          onClick={() => navigate(`/mypage/${encode(btoa(authUser.email))}`)}
+        >
+          Profile
+        </S.NavBtn>
+      </S.Nav>
+
       <StWirteBtn action="#" onSubmit={(e) => e.preventDefault()}>
-        {/* <Link to="/write"> */}
         <button onClick={() => navigate('/write')}>
           <img src={img} alt="글쓰기 버튼 이미지" />
         </button>
-        {/* </Link> */}
       </StWirteBtn>
 
       <StListSection>
@@ -117,7 +158,6 @@ const List = () => {
             {/* 최신순 인기순 정렬 입니다. */}
             {sortItems.map((item, index) => {
               return (
-                // <li key={item} onClick={() => onSetState(item)}>
                 <li
                   key={index}
                   onClick={() => {
@@ -125,7 +165,6 @@ const List = () => {
                     onClickListUl();
                   }}
                 >
-                  {/* <li key={item} onClick={() => dispatch()}> */}
                   <span>{item}</span>
                 </li>
               );
@@ -150,12 +189,15 @@ const BGCOLORONE = '#6C8383';
 const BGCOLORTWO = '#92A29C';
 const StListSection = styled.section`
   position: relative;
-  width: 1400px;
+  width: 1086px;
   margin: 2.5rem auto 0;
   box-sizing: border-box;
-  padding: 2.5rem 1.875rem 1.25rem;
-  background: ${BGCOLORONE};
+  padding: 1rem 1.875rem 1.25rem;
   & h2 {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    text-indent: -9999px;
     font-size: 1.4rem;
   }
 `;
@@ -163,29 +205,32 @@ const StListSection = styled.section`
 const StListGridBox = styled.ul`
   position: relative;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  /* grid-template-rows: repeat(3, 1fr); */
+  grid-template-columns: repeat(3, 1fr);
 `;
 
-const StListPosition = styled.div`
-  position: relative;
-`;
 const StListbox = styled.div`
-  background-color: ${BGCOLORTWO};
-  padding: 3.125rem 1.25rem 1.25rem;
+  width: 1086px;
+  margin: 0 auto;
+  padding-top: 84px;
+  border-top: 1px solid #fff;
 `;
 const StSortBox = styled.div`
   text-align: right;
   position: absolute;
-  top: 2rem;
-  right: 50px;
+  text-align: center;
+  top: -8px;
+  right: 0;
   z-index: 20;
+  width: 110px;
+  font-size: 20px;
   cursor: pointer;
 `;
 const btnColor = '#92a29c';
 const btnWidth = '3.5rem';
 const transitionWidth = '13.4375rem';
 const StWirteBtn = styled.form`
+  margin: 0 auto;
+  width: 1086px;
   margin-top: 2.75rem;
   display: flex;
   justify-content: center;
@@ -194,9 +239,9 @@ const StWirteBtn = styled.form`
   & button {
     width: ${btnWidth};
     height: ${btnWidth};
-    background-color: ${btnColor};
+    background-color: #fff;
     border-radius: ${btnWidth};
-    border: none;
+    border: 1px solid #000;
     transition: width 0.3s;
     &:hover {
       width: ${transitionWidth};

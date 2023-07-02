@@ -1,5 +1,4 @@
-const GET_USER_INFO = "GET_USER_INFO";
-
+const GET_USER_INFO = 'GET_USER_INFO';
 
 export const getUserInfo = (payload) => {
   return {

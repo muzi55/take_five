@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './../style/EditProfile.css';
 import { auth, db } from '../firebase';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   doc,
   updateDoc,
@@ -13,27 +13,27 @@ import {
 import { onAuthStateChanged } from 'firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserInfo } from '../redux/modules/UserInfo';
-import { getUserId } from '../redux/modules/UserId';
-import { decode, encode } from 'url-safe-base64';
 
-function EditProfile() {
+function AddProfile() {
   let [isInputClickedName, setIsInputClickedName] = useState(false);
   let [isInputClickedNick, setIsInputClickedNick] = useState(false);
   let [isInputClickedIntro, setIsInputClickedIntro] = useState(false);
   let [isInputClickedSpec, setIsInputClickedSpec] = useState(false);
 
+  // 프로필 정보 변수들
+  const [name, setName] = useState('');
+  let [nickName, setNickName] = useState('');
+  const [introduce, setIntroduce] = useState('');
+  const [spec, setSpec] = useState('');
+  const [imgFile, setImgFile] = useState(null);
   const imgRef = useRef();
-  const params = useParams();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userInfo);
-  const id = useSelector((state) => state.userId);
 
-  // 프로필 정보 변수들
-  const [name, setName] = useState(user.name);
-  const [nickName, setNickName] = useState(user.nickName);
-  const [introduce, setIntroduce] = useState(user.introduce);
-  const [spec, setSpec] = useState(user.spec);
-  const [imgFile, setImgFile] = useState(user.imgFile);
+  // useLocation을 이용해 Register(회원가입) 페이지에서 email과 nickName 값을 전달받기
+  const location = useLocation();
+  const email = location.state.email;
+  nickName = location.state.nick;
 
   // 페이지 렌더링시 fetchUserData 실행
   useEffect(() => {
@@ -43,26 +43,19 @@ function EditProfile() {
     fetchUserData();
   }, []);
 
-  // firebase에서 users 컬렉션에서 현재 로그인 중인 계정의 email과 같은 문서를 쿼리해서 해당 계정의 데이터와 id 읽어오기
+  // firebase에서 users 컬렉션에서 회원가입때 입력한 email이 같은 계정의 데이터 읽어오기
   const fetchUserData = async () => {
-    const dbUsers = query(
-      collection(db, 'users'),
-      where('email', '==', atob(decode(params.email)))
-    );
+    const dbUsers = query(collection(db, 'users'), where('email', '==', email));
 
     const usersData = [];
-    const userId = [];
-    const userSnapshot = await getDocs(dbUsers);
 
+    const userSnapshot = await getDocs(dbUsers);
     userSnapshot.forEach((doc) => {
-      usersData.push(doc.data());
-      userId.push({ id: doc.id, email: doc.data().email });
+      usersData.push({ id: doc.id });
     });
     dispatch(getUserInfo(...usersData));
-    dispatch(getUserId(...userId));
   };
 
-  // input 창에 값 입력시 변수값 저장하는 이벤트들
   const saveName = (event) => {
     setName(event.target.value);
   };
@@ -79,23 +72,22 @@ function EditProfile() {
     setSpec(event.target.value);
   };
 
-  // 이미지 업로드 input의 onChange 이벤트 함수
+  //
+
+  // 이미지 업로드 input의 onChange
   const saveImgFile = async () => {
     const file = imgRef.current.files[0];
-    const reader = new FileReader(); // FileReader를 이용해 이미지 로드
+    const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
       setImgFile(reader.result);
     };
   };
-
-  // 이미지 삭제 button의 onClick 이벤트함수
   const deleteImg = () => {
     setImgFile('');
   };
 
   const navigate = useNavigate();
-
   return (
     <div className="upload">
       <h2 className="profile_title">프로필 설정</h2> <br />
@@ -113,7 +105,7 @@ function EditProfile() {
           <br />
           <div className="imgUpload">
             <label className="input-profileImg-label" htmlFor="inputprofileImg">
-              프로필 수정
+              사진 넣기
             </label>
             <form>
               <input
@@ -154,6 +146,7 @@ function EditProfile() {
               onBlur={() => {
                 setIsInputClickedName(false);
               }}
+              // placeholder의 내용을 해당 input을 클릭시 비우고 다른 곳을 클릭시 placeholder의 내용을 보이게 하기 위해 setIsInputClick~~() 를 이용
               placeholder={
                 isInputClickedName === true ? '' : '이름을 입력해주세요.'
               }
@@ -230,8 +223,8 @@ function EditProfile() {
           className="finishbtn"
           onClick={async () => {
             try {
-              // 5개의 값을 firebase의 users 컬렉션에 현재 로그인 계정의 데이터를 업데이트
-              const updateInfoRef = doc(db, 'users', id.id);
+              // 5개의 값을 firebase의 users 컬렉션에서 회원가입한 해당 계정에 데이터를 저장
+              const updateInfoRef = doc(db, 'users', user.id);
               await updateDoc(updateInfoRef, {
                 name,
                 nickName,
@@ -253,7 +246,7 @@ function EditProfile() {
         <button
           className="cancelbtn"
           onClick={() => {
-            navigate(`/mypage/${encode(btoa(id.email))}`);
+            navigate('/');
           }}
         >
           취소
@@ -263,4 +256,4 @@ function EditProfile() {
   );
 }
 
-export default EditProfile;
+export default AddProfile;
