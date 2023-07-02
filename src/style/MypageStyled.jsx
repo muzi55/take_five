@@ -108,8 +108,10 @@ export const EditBtn = styled.button`
   border: 5px solid #fff;
   background-color: #fff;
   border-radius: 50%;
+  transition: scale 0.1s;
   &:hover {
     cursor: pointer;
+    scale: 1.1;
   }
 `;
 
