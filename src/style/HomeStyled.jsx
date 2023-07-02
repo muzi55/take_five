@@ -66,7 +66,7 @@ export const Input = styled.input`
 `;
 
 export const SignButton = styled.button`
-  background-color: #366671;
+  background-color: #6c8383;
   align-self: center;
   justify-self: center;
   width: 70px;
@@ -75,20 +75,20 @@ export const SignButton = styled.button`
   font-weight: bold;
   border: none;
   border-radius: 4px;
-  box-shadow: 3px 3px 3px;
+  box-shadow: 2px 2px 2px;
   &:active {
     background-color: #33464a;
   }
 `;
 export const LoginButton = styled.button`
-  background-color: #366671;
+  background-color: #6c8383;
   width: 70px;
   height: 30px;
   margin-left: 5px;
   font-weight: bold;
   border: none;
   border-radius: 4px;
-  box-shadow: 3px 3px 3px;
+  box-shadow: 2px 2px 2px;
   &:active {
     background-color: #33464a;
   }
