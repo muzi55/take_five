@@ -1,87 +1,141 @@
-import React, { useEffect, useState } from 'react';
-import { collection, getDocs, query } from 'firebase/firestore';
-import { db } from '../firebase';
-import { InnerBox } from './Write';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+} from 'firebase/firestore';
+import { auth, db } from '../firebase';
+import { InnerBox, WriteBtn } from './Write';
 import { MyInfo, WriteBox } from '../style/DetailStyled';
-
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import LikeImg from '../images/Like.svg';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserPhoto } from '../redux/modules/UserPhoto';
+import styled from 'styled-components';
+import { onAuthStateChanged } from 'firebase/auth';
 
 function Detail() {
+  const navigate = useNavigate();
   const param = useParams();
   const paramEmail = param.email.split('&')[0];
-  console.log(paramEmail);
+  const paramId = param.email.split('&')[1];
+  const userPhoto = useSelector((state) => state.userPhoto);
+  const dispatch = useDispatch();
+
+  onAuthStateChanged(auth, (users) => {
+    dispatch(getUserPhoto(users.photoURL));
+  });
+
+  const deleteIdRef = useRef('');
+  const editIdRef = useRef('');
+
   const [userInfo, setUserInfo] = useState({});
-  // 데이터 읽기 -----------------------------------------------------
+
+  // firestore에서 infos, users 데이터 읽기
+
   useEffect(() => {
     const fetchData = async () => {
-      // collection 이름이 todos인 collection의 모든 document를 가져옵니다.
       const dbInfos = query(collection(db, 'infos'));
       const dbUsers = query(collection(db, 'users'));
-      //  히히히
+
       const querySnapshotInfo = await getDocs(dbInfos);
       const querySnapshotUser = await getDocs(dbUsers);
-      // 히히히
+
       const initialInfos = [];
       const initialUsers = [];
-      // 히히히
-      // document의 id와 데이터를 initialTodos에 저장합니다.
-      // doc.id의 경우 따로 지정하지 않는 한 자동으로 생성되는 id입니다.
-      // doc.data()를 실행하면 해당 document의 데이터를 가져올 수 있습니다.
+
       querySnapshotInfo.forEach((doc) => {
         initialInfos.push({ id: doc.id, ...doc.data() });
       });
       querySnapshotUser.forEach((doc) => {
         initialUsers.push({ id: doc.id, ...doc.data() });
       });
-      // 히히히
-      console.log(initialInfos);
-      console.log(initialUsers);
 
       const filterInfo = initialInfos.filter((info) => {
-        if (info.email === paramEmail) {
+        if (info.email === paramEmail && info.id === paramId) {
           return info;
         }
       });
-
       initialUsers.filter((user) => {
-        console.log(user.email);
         if (user.email === paramEmail) {
-          console.log('1');
-          setUserInfo({ ...filterInfo[0], ...user });
+          setUserInfo({ ...user, ...filterInfo[0] });
         }
       });
 
-      // querySnapshot.forEach((doc) => {
-      //   initialTodos.push({ id: doc.id, ...doc.data() });
-      // });
-
-      // firestore에서 가져온 데이터를 state에 전달
-      // setTodos(initialTodos);
+      const userEmail = auth.currentUser.email;
+      if (userEmail !== paramEmail) {
+        deleteIdRef.current.style.display = 'none';
+        editIdRef.current.style.display = 'none';
+      } else {
+        deleteIdRef.current.style.display = 'inline-block';
+        editIdRef.current.style.display = 'inline-block';
+      }
     };
-
     fetchData();
   }, []);
 
-  const { company, goodbad, grow, introduce, like, motive, name, skill } =
-    userInfo;
-  //----------------------------------------------------------------------------
+  // firestore 데이터 삭제 부분
+  const {
+    company,
+    goodBad,
+    grow,
+    motive,
+    like,
+
+    introduce,
+    name,
+    spec,
+    imgFile,
+  } = userInfo;
+
+  const deleteInfo = async (event) => {
+    if (confirm('삭제하시겠습니까?')) {
+      const todoRef = doc(db, 'infos', like);
+      await deleteDoc(todoRef);
+      navigate('/list');
+    }
+  };
+
+  // 리덕스 사용
+  const dispetch = useDispatch();
+  const editDetail = () => {
+    dispetch({
+      type: 'EDIT_DETAIL',
+      payload: userInfo,
+    });
+  };
+  // 업데이트 부분
+  const [render, setRender] = useState(like);
+  const updateInfo = async (event) => {
+    const infoRef = doc(db, 'infos', info.id);
+    // 기존값, {...info, 변경해야할키 : 변경해야하는값}
+    await updateDoc(infoRef, { ...info, like: Number(like) + 1 }); // 업데이트할 필드 명시
+
+    setRender((render) => render + 1);
+  };
 
   return (
     <InnerBox>
       {/* my page 내용 */}
       <MyInfo>
-        <img
-          src="https://velog.velcdn.com/images/seul-bean/profile/259fe091-ca51-424b-bf1a-aca4da376a9c/social_profile.png"
-          alt="프로필 사진"
-        />
+        {/* 추가부분 라이크 박스 */}
+        <StLikeSpan>
+          <img onClick={updateInfo} src={LikeImg} alt="하트모양 이미지" /> :
+          {render}
+          {like}
+        </StLikeSpan>
+        <img src={imgFile ?? '/user.png'} alt="프로필 사진" />
         <div className="myInfo_text">
           <dl>
             <dt>Name</dt>
             <dd>{name}</dd>
           </dl>
           <dl>
-            <dt>skill</dt>
-            <dd>{skill}</dd>
+            <dt>spec</dt>
+            <dd>{spec}</dd>
           </dl>
           <dl>
             <dt>Introduce</dt>
@@ -106,11 +160,52 @@ function Detail() {
         </dl>
         <dl>
           <dt>자신의 장단점</dt>
-          <dd>{goodbad}</dd>
+          <dd>{goodBad}</dd>
         </dl>
       </WriteBox>
+
+      {/* 수정, 삭제 버튼 */}
+      <WriteBtn>
+        <button
+          onClick={() => {
+            editDetail();
+            navigate(`/editdetail/${userInfo.id}`);
+          }}
+          ref={editIdRef}
+        >
+          수정
+        </button>
+        <button onClick={deleteInfo} ref={deleteIdRef}>
+          삭제
+        </button>
+        <button
+          onClick={() => {
+            navigate('/list');
+          }}
+        >
+          이전페이지
+        </button>
+      </WriteBtn>
     </InnerBox>
   );
 }
 
 export default Detail;
+
+const StLikeSpan = styled.span`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 2.5rem;
+  right: 4rem;
+  font-size: 1.4rem;
+  & img {
+    background: none;
+    transition: all 8s;
+    cursor: pointer;
+    &:active {
+      transform: rotateY(18560deg);
+      background: magenta;
+    }
+  }
+`;

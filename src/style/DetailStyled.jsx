@@ -1,6 +1,7 @@
 import { styled } from 'styled-components';
 
 export const MyInfo = styled.div`
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;

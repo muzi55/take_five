@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './../style/EditProfile.css';
 import { auth, db } from '../firebase';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   doc,
   updateDoc,
@@ -13,47 +13,46 @@ import {
 import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserInfo } from '../redux/modules/UserInfo';
-import { getUserId } from '../redux/modules/UserId';
-import { decode } from 'url-safe-base64';
 
-function EditProfile() {
+function AddProfile() {
   let [isInputClickedName, setIsInputClickedName] = useState(false);
   let [isInputClickedNick, setIsInputClickedNick] = useState(false);
   let [isInputClickedIntro, setIsInputClickedIntro] = useState(false);
   let [isInputClickedSpec, setIsInputClickedSpec] = useState(false);
 
+  const [name, setName] = useState('');
+  let [nickName, setNickName] = useState('');
+  const [introduce, setIntroduce] = useState('');
+  const [spec, setSpec] = useState('');
+  const [imgFile, setImgFile] = useState(null);
   const imgRef = useRef();
   const params = useParams();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userInfo);
-  const id = useSelector((state) => state.userId);
-
-  console.log(id);
+  //
+  const location = useLocation();
+  const email = location.state.email;
+  nickName = location.state.nick;
 
   useEffect(() => {
     onAuthStateChanged(auth, (users) => {
-      // console.log(user.email); // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
       console.log(users); // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
     });
     fetchUserData();
+    console.log(email);
   }, []);
+  //
 
   const fetchUserData = async () => {
-    const dbUsers = query(
-      collection(db, 'users'),
-      where('email', '==', atob(decode(params.email)))
-    );
+    const dbUsers = query(collection(db, 'users'), where('email', '==', email));
 
     const usersData = [];
-    const userId = [];
 
     const userSnapshot = await getDocs(dbUsers);
     userSnapshot.forEach((doc) => {
-      usersData.push(doc.data());
-      userId.push({ id: doc.id });
+      usersData.push({ id: doc.id });
     });
     dispatch(getUserInfo(...usersData));
-    dispatch(getUserId(...userId));
   };
   // const updateUser = async (userId, newData) => {
   //   try {
@@ -64,12 +63,8 @@ function EditProfile() {
   //     console.log('Error updating user: ', error);
   //   }
   // };
+
   //
-  const [name, setName] = useState(user.name);
-  const [nickName, setNickName] = useState(user.nickName);
-  const [introduce, setIntroduce] = useState(user.introduce);
-  const [spec, setSpec] = useState(user.spec);
-  const [imgFile, setImgFile] = useState(user.imgFile);
 
   const saveName = (event) => {
     setName(event.target.value);
@@ -103,7 +98,6 @@ function EditProfile() {
   };
 
   const navigate = useNavigate();
-
   return (
     <div className="upload">
       <h2 className="profile_title">프로필 설정</h2> <br />
@@ -124,7 +118,7 @@ function EditProfile() {
           <br />
           <div className="imgUpload">
             <label className="input-profileImg-label" htmlFor="inputprofileImg">
-              프로필 수정
+              사진 넣기
             </label>
             <form>
               <input
@@ -241,7 +235,7 @@ function EditProfile() {
           className="finishbtn"
           onClick={async () => {
             try {
-              const updateInfoRef = doc(db, 'users', id.id);
+              const updateInfoRef = doc(db, 'users', user.id);
               await updateDoc(updateInfoRef, {
                 name,
                 nickName,
@@ -285,4 +279,4 @@ function EditProfile() {
   );
 }
 
-export default EditProfile;
+export default AddProfile;

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import * as H from '../style/HomeStyled';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -27,6 +27,13 @@ function Home() {
       dispatch({ type: 'CHANGE_PASSWORD', payload: value });
     }
   };
+  // 삭제해도 되는지 확인..
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
+      // console.log('user', user);
+    });
+  }, []);
 
   return (
     <H.Grid>

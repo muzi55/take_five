@@ -1,84 +1,92 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import * as S from '../style/RegisterStyled';
 import { auth, db } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { addDoc, collection } from 'firebase/firestore';
+import { useSelector, useDispatch } from 'react-redux';
 
 function Register() {
-  // 인풋창 useState
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordCheck, setPasswordCheck] = useState('');
-  const [nickName, setNickname] = useState('');
+  const {
+    email,
+    password,
+    passwordCheck,
+    nickName,
+    emailMessage,
+    passwordMessage,
+    passwordCheckMessage,
+    nickNameMessage,
+  } = useSelector((state) => state.LoginModule);
 
-  //오류메시지 상태저장
-  const [nickNameMessage, setNicknameMessage] = useState('');
-  const [emailMessage, setEmailMessage] = useState('');
-  const [passwordMessage, setPasswordMessage] = useState('');
-  const [passwordCheckMessage, setPasswordCheckMessage] = useState('');
+  const dispatch = useDispatch();
 
-  // 유효성 검사
-  const [isNickname, setIsNickname] = useState(false);
-  const [isEmail, setIsEmail] = useState(false);
-  const [isPassword, setIsPassword] = useState(false);
-  const [isPasswordCheck, setIsPasswordCheck] = useState(false);
-
-  //onChange 개별
   const onChangeEmail = useCallback((event) => {
     const emailRule =
       /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
     const emailCurrent = event.target.value;
-    setEmail(emailCurrent);
+    dispatch({ type: 'CHANGE_EMAIL', payload: emailCurrent });
     if (!emailRule.test(emailCurrent)) {
-      setEmailMessage('이메일 형식으로 다시 입력해주세요.');
-      setIsEmail(false);
+      dispatch({
+        type: 'CHANGE_EMAIL_MESSAGE',
+        payload: '이메일 형식으로 다시 입력해주세요.',
+      });
     } else {
-      setEmailMessage('올바른 이메일 형식입니다.');
-      setIsEmail(true);
+      dispatch({
+        type: 'CHANGE_EMAIL_MESSAGE',
+        payload: '올바른 이메일 형식입니다.',
+      });
     }
   }, []);
 
   const onChangeNickname = useCallback((event) => {
-    setNickname(event.target.value);
+    dispatch({ type: 'CHANGE_NICKNAME', payload: event.target.value });
     if (event.target.value.length < 2 || event.target.value.length > 5) {
-      setNicknameMessage('2글자 이상 5글자 미만으로 입력해주세요.');
-      setIsNickname(false);
+      dispatch({
+        type: 'CHANGE_NICKNAME_MESSAGE',
+        payload: '2글자 이상 5글자 미만으로 입력해주세요.',
+      });
     } else {
-      setNicknameMessage('올바른 이름 형식입니다.');
-      setIsNickname(true);
+      dispatch({
+        type: 'CHANGE_NICKNAME_MESSAGE',
+        payload: '올바른 이름 형식입니다.',
+      });
     }
   }, []);
 
   const onChangePassword = useCallback((event) => {
     const passwordRule = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
     const passwordCurrent = event.target.value;
-    setPassword(passwordCurrent);
+    dispatch({ type: 'CHANGE_PASSWORD', payload: passwordCurrent });
     if (!passwordRule.test(passwordCurrent)) {
-      setPasswordMessage('숫자+영문자+특수문자 조합으로 입력해주세요.');
-      setIsPassword(false);
+      dispatch({
+        type: 'CHANGE_PASSWORD_MESSAGE',
+        payload: '숫자+영문자+특수문자 조합으로 입력해주세요.',
+      });
     } else {
-      setPasswordMessage('올바른 비밀번호 형식입니다.');
-      setIsPassword(true);
+      dispatch({
+        type: 'CHANGE_PASSWORD_MESSAGE',
+        payload: '올바른 비밀번호 형식입니다.',
+      });
     }
   }, []);
-
   const onChangePasswordCheck = useCallback(
     (event) => {
       const passwordCheckCurrent = event.target.value;
-      setPasswordCheck(passwordCheckCurrent);
+      dispatch({ type: 'CHANGE_PASSWORDCHECK', payload: passwordCheckCurrent });
       if (password === passwordCheckCurrent) {
-        setPasswordCheckMessage('입력한 비밀번호와 일치합니다.');
-        setIsPasswordCheck(true);
+        dispatch({
+          type: 'CHANGE_PASSWORDCHECK_MESSAGE',
+          payload: '입력한 비밀번호와 일치합니다.',
+        });
       } else {
-        setPasswordCheckMessage('비밀번호가 다릅니다. 다시 확인해주세요.');
-        setIsPasswordCheck(false);
+        dispatch({
+          type: 'CHANGE_PASSWORDCHECK_MESSAGE',
+          payload: '비밀번호가 다릅니다. 다시 확인해주세요.',
+        });
       }
     },
     [password]
   );
-
-  console.log(1111);
   const navigate = useNavigate();
   return (
     <S.Grid>
@@ -149,13 +157,14 @@ function Register() {
                       email,
                       password
                     );
-                    // const id = userCredential.user.uid;// uid:id,
                     const collectionRef = collection(db, 'users');
                     await addDoc(collectionRef, {
                       email: email,
                       nickName: nickName,
                     });
-                    navigate('/editprofile/:email');
+                    navigate('/AddProfile/', {
+                      state: { email: email, nick: nickName },
+                    });
                   } catch (error) {
                     console.error(error);
                   }
