@@ -1,3 +1,6 @@
+// 하트에서 숫자가 출력되기 전에
+// 공간이 없으므로 밀리는게 보기 안좋다
+
 import React, { useEffect, useRef, useState } from 'react';
 import {
   collection,
@@ -8,20 +11,23 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import { InnerBox, WriteBtn } from './Write';
-import { MyInfo, WriteBox } from '../style/DetailStyled';
-
+import { InnerBox, Wrap, WriteBtn } from './Write';
+import { MyInfo, InfoBox } from '../style/DetailStyled';
 import { useNavigate, useParams } from 'react-router-dom';
 import LikeImg from '../images/Like.svg';
-import { useDispatch } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { onAuthStateChanged } from 'firebase/auth';
+import { decode } from 'url-safe-base64';
 
 function Detail() {
   const navigate = useNavigate();
   const param = useParams();
   const paramEmail = param.email.split('&')[0];
   const paramId = param.email.split('&')[1];
+  const dispatch = useDispatch();
+
+  onAuthStateChanged(auth, (users) => {});
 
   const deleteIdRef = useRef('');
   const editIdRef = useRef('');
@@ -49,19 +55,18 @@ function Detail() {
       });
 
       const filterInfo = initialInfos.filter((info) => {
-        if (info.email === paramEmail) {
+        if (info.email === atob(decode(paramEmail)) && info.id === paramId) {
           return info;
         }
       });
       initialUsers.filter((user) => {
-        if (user.email === paramEmail) {
+        if (user.email === atob(decode(paramEmail))) {
           setUserInfo({ ...user, ...filterInfo[0] });
-          setInfo(filterInfo[0]);
         }
       });
 
       const userEmail = auth.currentUser.email;
-      if (userEmail !== paramEmail) {
+      if (userEmail !== atob(decode(paramEmail))) {
         deleteIdRef.current.style.display = 'none';
         editIdRef.current.style.display = 'none';
       } else {
@@ -73,50 +78,58 @@ function Detail() {
   }, []);
 
   // firestore 데이터 삭제 부분
-  const { company, goodbad, grow, introduce, like, motive, name, spec } =
-    userInfo;
+  const {
+    company,
+    goodBad,
+    grow,
+    motive,
+    like,
+    title,
+
+    introduce,
+    name,
+    spec,
+    imgFile,
+  } = userInfo;
 
   const deleteInfo = async (event) => {
     if (confirm('삭제하시겠습니까?')) {
-      const todoRef = doc(db, 'infos', like);
+      const todoRef = doc(db, 'infos', userInfo.id);
+      console.log(todoRef);
       await deleteDoc(todoRef);
       navigate('/list');
     }
   };
 
   // 리덕스 사용
-  const dispetch = useDispatch();
   const editDetail = () => {
-    dispetch({
+    dispatch({
       type: 'EDIT_DETAIL',
       payload: userInfo,
     });
+  };
+  const [render, setRender] = useState(userInfo.like);
+  const updateInfo = async (event) => {
+    const updatedLike = Number(userInfo.like) + 1;
+    const infoRef = doc(db, 'infos', userInfo.id);
+    await updateDoc(infoRef, { ...userInfo, like: updatedLike });
 
-    // 업데이트 부분
-    const [render, setRender] = useState(like);
-    const updateInfo = async (event) => {
-      const infoRef = doc(db, 'infos', info.id);
-      // 기존값, {...info, 변경해야할키 : 변경해야하는값}
-      await updateDoc(infoRef, { ...info, like: Number(like) + 1 }); // 업데이트할 필드 명시
+    // 여기서 seUserInfo의 값을 바꿔줌에따라, 페이지가 리렌더링된다.
+    setUserInfo((prevUserInfo) => ({ ...prevUserInfo, like: updatedLike }));
+  };
 
-      setRender((render) => render + 1);
-    };
-
-    return (
+  return (
+    <Wrap>
       <InnerBox>
         {/* my page 내용 */}
         <MyInfo>
           {/* 추가부분 라이크 박스 */}
-          <StLikeSpan>
-            <img onClick={updateInfo} src={LikeImg} alt="하트모양 이미지" /> :
-            {render}
-            {like}
-          </StLikeSpan>
-          <img
-            src="https://velog.velcdn.com/images/seul-bean/profile/259fe091-ca51-424b-bf1a-aca4da376a9c/social_profile.png"
-            alt="프로필 사진"
-          />
+          <img src={imgFile ?? '/user.png'} alt="프로필 사진" />
           <div className="myInfo_text">
+            <StLikeSpan>
+              <img onClick={updateInfo} src={LikeImg} alt="하트모양 이미지" />
+              {like}
+            </StLikeSpan>
             <dl>
               <dt>Name</dt>
               <dd>{name}</dd>
@@ -131,9 +144,10 @@ function Detail() {
             </dl>
           </div>
         </MyInfo>
-
+        <StLineHr></StLineHr>
         {/* write 내용 */}
-        <WriteBox>
+        <InfoBox>
+          <h2>{title}</h2>
           <dl>
             <dt>본인이 지원하고자 하는 회사란?</dt>
             <dd>{company}</dd>
@@ -150,7 +164,7 @@ function Detail() {
             <dt>자신의 장단점</dt>
             <dd>{goodBad}</dd>
           </dl>
-        </WriteBox>
+        </InfoBox>
 
         {/* 수정, 삭제 버튼 */}
         <WriteBtn>
@@ -175,26 +189,32 @@ function Detail() {
           </button>
         </WriteBtn>
       </InnerBox>
-    );
-  };
+    </Wrap>
+  );
 }
 
 export default Detail;
 
 const StLikeSpan = styled.span`
   display: flex;
+  flex-direction: row;
   align-items: center;
-  position: absolute;
-  top: 2.5rem;
-  right: 4rem;
-  font-size: 1.4rem;
+  width: 100%;
+  margin-bottom: 20px;
   & img {
     background: none;
     transition: all 8s;
     cursor: pointer;
+    width: 30px;
+    margin-right: 15px;
     &:active {
       transform: rotateY(18560deg);
       background: magenta;
     }
   }
+`;
+
+const StLineHr = styled.hr`
+  margin-top: 80px;
+  border: 1px solid #214047;
 `;

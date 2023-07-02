@@ -152,7 +152,9 @@ function Register() {
                       email: email,
                       nickName: nickName,
                     });
-                    navigate('/editprofile/:email');
+                    navigate('/AddProfile/', {
+                      state: { email: email, nick: nickName },
+                    });
                   } catch (error) {
                     console.error(error);
                   }
