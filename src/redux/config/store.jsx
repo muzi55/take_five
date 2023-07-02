@@ -1,10 +1,19 @@
 import { createStore } from 'redux';
 import { combineReducers } from 'redux';
-import lists from '../modules/modules';
+import userId from '../modules/UserId';
+import userInfo from '../modules/UserInfo';
+import userWrite from '../modules/UserWrite';
+import LoginModule from '../modules/LoginModule';
+import editDetail from '../modules/DetailInfo';
+import loginsubmit from '../modules/loginEmail';
+
 const rootReducer = combineReducers({
-  // 여기서 부터 추가 !!
-  lists,
-  
+  userId,
+  userInfo,
+  userWrite,
+  LoginModule,
+  editDetail,
+  loginsubmit,
 });
 
 const store = createStore(rootReducer);
