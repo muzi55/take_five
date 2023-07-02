@@ -220,6 +220,9 @@ export const WriteBtn = styled.div`
   margin-top: 60px;
   text-align: center;
   padding-bottom: 80px;
+  & .deleteBtn:hover {
+    background-color: #e7b7b7;
+  }
   & button {
     display: inline-block;
     width: 160px;
@@ -231,5 +234,10 @@ export const WriteBtn = styled.div`
     cursor: pointer;
     margin: 0 20px;
     box-shadow: 3px 3px 5px 0px #00000050;
+  }
+  transition: 0.5s;
+  & button:hover {
+    background-color: #fff;
+    transition: 0.3s;
   }
 `;

@@ -177,7 +177,7 @@ function Detail() {
           >
             수정
           </button>
-          <button onClick={deleteInfo} ref={deleteIdRef}>
+          <button className="deleteBtn" onClick={deleteInfo} ref={deleteIdRef}>
             삭제
           </button>
           <button
@@ -206,7 +206,10 @@ const StLikeSpan = styled.span`
     transition: all 8s;
     cursor: pointer;
     width: 30px;
+    height: 30px;
     margin-right: 15px;
+    border: none;
+    box-shadow: none;
     &:active {
       transform: rotateY(18560deg);
       background: magenta;
