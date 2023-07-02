@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getUserInfo } from '../redux/modules/UserInfo';
 import { getUserWrite } from '../redux/modules/UserWrite';
 import * as S from '../style/MypageStyled';
+import img from './../images/wirteBtn.svg';
 
 function MyPage() {
   const navigate = useNavigate();
@@ -81,66 +82,61 @@ function MyPage() {
   return (
     <S.Layout>
       <S.Nav>
-        <S.NavImgBtn onClick={() => navigate(`/list`)}>
-          뉴스 피드 가기
-        </S.NavImgBtn>
-        <S.NavBtn onClick={logout}>log out</S.NavBtn>
-        <S.NavImgBtn
-          onClick={() => navigate(`/mypage/${encode(btoa(userInfo.email))}`)}
-        >
-          <S.NavImg src={userInfo.imgFile ?? '/user.png'} alt="" />
-        </S.NavImgBtn>
+        <S.NavBtn onClick={logout}>Log out</S.NavBtn>
+        <S.NavBtn onClick={() => navigate(`/list`)}>Back to List</S.NavBtn>
       </S.Nav>
-      <S.Container>
-        <S.ProfileImg>
-          <S.EditBtn
-            onClick={() =>
-              navigate(`/editprofile/${encode(btoa(userInfo.email))}`)
-            }
-          >
-            <img src="" alt="" />
-          </S.EditBtn>
-          <S.Img src={userInfo.imgFile ?? '/user.png'} alt="" />
-          <S.Profile>프로필</S.Profile>
-        </S.ProfileImg>
-        <S.NickNameBox>
-          {userInfo.nickName}
-          <br />
-          나의 게시물 수 : {userWrite.length} / 게시물 좋아요 수 : ♥{' '}
-          {userWrite.map((obj) => Number(obj.like)).reduce((a, b) => a + b, 0)}
-        </S.NickNameBox>
-        <S.IntroBox>
-          <div>소개글</div>
-          <div>{userInfo.introduce}</div>
-        </S.IntroBox>
-        <S.WriteList>
-          나의 게시물
-          {userWrite.map((obj) => {
-            return (
-              <S.StList key={obj.id}>
-                <S.ListTitle>
-                  {/* 여기 바꿔야함 */}
-                  {obj.id}
-                  <S.ListBtn>♥ {obj.like}</S.ListBtn>
-                </S.ListTitle>
-                <S.ListBtnBox>
-                  <S.ListBtn
-                    onClick={() =>
-                      navigate(`/detail/${encode(btoa(obj.email))}&${obj.id}`)
-                    }
+      <S.GridMain>
+        <S.ProfileSidebar>
+          <S.SidebarText>PROFILE</S.SidebarText>
+          <S.SidebarSubText>Let everyone know who you are</S.SidebarSubText>
+        </S.ProfileSidebar>
+        <S.Container>
+          <S.ProfileImg>
+            <S.EditBtn
+              onClick={() =>
+                navigate(`/editprofile/${encode(btoa(userInfo.email))}`)
+              }
+            >
+              <img src={img} alt="" />
+            </S.EditBtn>
+            <S.Img src={userInfo.imgFile ?? '/user.png'} alt="" />
+            <S.Profile>프로필</S.Profile>
+          </S.ProfileImg>
+          <S.NickNameBox>
+            {userInfo.nickName}
+            <br />
+            나의 게시물 수 : {userWrite.length} / 게시물 좋아요 수 : ♥{' '}
+            {userWrite
+              .map((obj) => Number(obj.like))
+              .reduce((a, b) => a + b, 0)}
+          </S.NickNameBox>
+          <S.IntroBox>
+            <div>소개글</div>
+            <div>{userInfo.introduce}</div>
+          </S.IntroBox>
+          <S.WriteList>
+            나의 게시물
+            {userWrite.map((obj) => {
+              return (
+                <S.StList key={obj.id}>
+                  <S.ListTitle
+                    to={`/detail/${encode(btoa(obj.email))}&${obj.id}`}
                   >
-                    {console.log(obj.id)}
-                    수정
-                  </S.ListBtn>
-                  <S.ListBtn onClick={() => deleteWrite(obj.id)}>
-                    삭제
-                  </S.ListBtn>
-                </S.ListBtnBox>
-              </S.StList>
-            );
-          })}
-        </S.WriteList>
-      </S.Container>
+                    {/* 여기 바꿔야함 */}
+                    {obj.id}
+                  </S.ListTitle>
+                  <S.ListBtnBox>
+                    <S.ListLike>♥ {obj.like}</S.ListLike>
+                    <S.ListBtn onClick={() => deleteWrite(obj.id)}>
+                      삭제
+                    </S.ListBtn>
+                  </S.ListBtnBox>
+                </S.StList>
+              );
+            })}
+          </S.WriteList>
+        </S.Container>
+      </S.GridMain>
     </S.Layout>
   );
 }
