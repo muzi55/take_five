@@ -2,13 +2,15 @@ import React, { useRef, useState } from 'react';
 import { InnerBox, Wrap, WriteBox, WriteBtn } from './Write';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { doc, updateDoc } from 'firebase/firestore';
+import { encode } from 'url-safe-base64';
 
 function EditDetail() {
   const userInfo = useSelector((state) => state.editDetail);
   const { title, company, goodBad, grow, motive, date, email, id } = userInfo;
 
+  // const { company, goodBad, grow, motive, date, email, id } = itemFromMypage[0];
   // input value
   const navigate = useNavigate();
   const [editTitle, setEditTitle] = useState(title);
@@ -67,7 +69,7 @@ function EditDetail() {
         await updateDoc(infoRef, newInfo);
 
         //다시 해당 detail 페이지로 이동
-        navigate(`/detail/${email}&${id}`);
+        navigate(`/detail/${encode(btoa(email))}&${id}`);
       }
     }
   };

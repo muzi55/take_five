@@ -1,12 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { collection, getDocs, query } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import ListItem from '../components/ListItem';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { encode } from 'url-safe-base64';
 import img from './../images/wirteBtn.svg';
-import { onAuthStateChanged } from 'firebase/auth';
+//
+//
+//
+import * as S from '../style/MypageStyled';
+import { getUserInfo } from '../redux/modules/UserInfo';
+import { useSelector } from 'react-redux';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 const List = () => {
   const navigate = useNavigate();
@@ -94,31 +100,69 @@ const List = () => {
   });
 
   // 인기순으로 정렬되어있는 함수입니다.
-  const popularList = [...newarr].sort((a, b) => b.date - a.date);
-  // const popularList = [...newarr].sort((a, b) => {
-  //   if (a.like < b.like) return 1;
-  //   if (a.like > b.like) return -1;
-  //   return 0;
-  // });
+  const popularList = [...newarr].sort((a, b) => b.like - a.like);
 
   // 최신순으로 정렬되어있는 함수입니다.
   // 현재 date값이 객체입니다. 이부분은 보안이 필요합니다.
   const newestList = [...newarr].sort((a, b) => a.date - b.date);
 
+  //
+  // 헤더 부분
+  // 로그인 버튼 클릭시 email값을 리덕스로 받아옵니다.
+  const [profileImg, setProfileImg] = useState(null);
+  const userEmail = useSelector((state) => state.loginsubmit);
+  onAuthStateChanged(auth, (users) => {});
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+  const fetchUserData = async () => {
+    const dbUsers = query(
+      collection(db, 'users'),
+      where('email', '==', userEmail)
+    );
+
+    const usersData = [];
+
+    const userSnapshot = await getDocs(dbUsers);
+    userSnapshot.forEach((doc) => {
+      usersData.push(doc.data());
+    });
+    setProfileImg(usersData[0].imgFile);
+  };
+
+  const userInfo = useSelector((state) => state.userInfo);
+  const logout = async (event) => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      event.preventDefault();
+      await signOut(auth);
+      navigate('/');
+    }
+  };
+
+  const comparisonUserImg = userInfo.imgFile
+    ? userInfo.imgFile
+    : profileImg
+    ? profileImg
+    : '/user.png';
+  console.log(comparisonUserImg);
   return (
     <div>
-      <button
-        onClick={() => navigate(`/mypage/${encode(btoa(authUser.email))}`)}
-      >
-        마이페이지
-      </button>
-      {/* <WritingForm>히히히</WritingForm> */}
+      <S.Nav>
+        <S.NavBtn onClick={logout}>log out</S.NavBtn>
+        <S.NavImgBtn
+          onClick={() => navigate(`/mypage/${encode(btoa(authUser.email))}`)}
+        >
+          <S.NavImg src={comparisonUserImg} alt="" />
+
+          {/* {console.log(profileImg)} */}
+          {/* {console.log(userInfo)} */}
+        </S.NavImgBtn>
+      </S.Nav>
+
       <StWirteBtn action="#" onSubmit={(e) => e.preventDefault()}>
-        {/* <Link to="/write"> */}
         <button onClick={() => navigate('/write')}>
           <img src={img} alt="글쓰기 버튼 이미지" />
         </button>
-        {/* </Link> */}
       </StWirteBtn>
 
       <StListSection>

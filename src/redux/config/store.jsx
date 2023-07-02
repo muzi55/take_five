@@ -1,18 +1,19 @@
-import { createStore } from "redux";
-import { combineReducers } from "redux";
-import userInfo from "../modules/UserInfo";
-import userWrite from "../modules/UserWrite";
-import userPhoto from "../modules/UserPhoto";
+import { createStore } from 'redux';
+import { combineReducers } from 'redux';
+import userId from '../modules/UserId';
+import userInfo from '../modules/UserInfo';
+import userWrite from '../modules/UserWrite';
 import LoginModule from '../modules/LoginModule';
 import editDetail from '../modules/DetailInfo';
+import loginsubmit from '../modules/loginEmail';
 
 const rootReducer = combineReducers({
+  userId,
   userInfo,
   userWrite,
-  userPhoto,
   LoginModule,
-editDetail,
-
+  editDetail,
+  loginsubmit,
 });
 
 const store = createStore(rootReducer);

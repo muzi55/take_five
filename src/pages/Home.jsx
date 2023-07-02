@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useSelector, useDispatch } from 'react-redux';
+import { loginmail } from '../redux/modules/loginEmail';
 
 function Home() {
   const email = useSelector((state) => {
@@ -107,6 +108,10 @@ function Home() {
                       password
                     );
                     navigate('/list');
+                    //
+                    // 로그인 될때 email 값을 받아와야해서 추가했습니다 => 홍민
+                    // 로그인 버튼을 눌렀을때 => email을 redux로 보내서 내가 사용합니다. !
+                    dispatch(loginmail(email));
                   } catch (error) {
                     console.error(error);
                   }

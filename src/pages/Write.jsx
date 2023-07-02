@@ -43,6 +43,7 @@ function Write() {
       motive,
       grow,
       goodBad,
+      like: 0,
     };
 
     // 유효성 검사

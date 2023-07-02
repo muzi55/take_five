@@ -14,7 +14,6 @@ import { decode, encode } from 'url-safe-base64';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserInfo } from '../redux/modules/UserInfo';
 import { getUserWrite } from '../redux/modules/UserWrite';
-import { getUserPhoto } from '../redux/modules/UserPhoto';
 import * as S from '../style/MypageStyled';
 
 function MyPage() {
@@ -23,16 +22,13 @@ function MyPage() {
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.userInfo);
   const userWrite = useSelector((state) => state.userWrite);
-  const userPhoto = useSelector((state) => state.userPhoto);
-  console.log(userInfo);
+
   useEffect(() => {
     fetchUserData();
     fetchInfoData();
   }, []);
 
-  onAuthStateChanged(auth, (users) => {
-    dispatch(getUserPhoto(users.photoURL));
-  });
+  onAuthStateChanged(auth, (users) => {});
 
   const fetchUserData = async () => {
     const dbUsers = query(
@@ -43,9 +39,11 @@ function MyPage() {
     const usersData = [];
 
     const userSnapshot = await getDocs(dbUsers);
+
     userSnapshot.forEach((doc) => {
       usersData.push(doc.data());
     });
+
     dispatch(getUserInfo(...usersData));
   };
 
@@ -83,11 +81,14 @@ function MyPage() {
   return (
     <S.Layout>
       <S.Nav>
+        <S.NavImgBtn onClick={() => navigate(`/list`)}>
+          뉴스 피드 가기
+        </S.NavImgBtn>
         <S.NavBtn onClick={logout}>log out</S.NavBtn>
         <S.NavImgBtn
           onClick={() => navigate(`/mypage/${encode(btoa(userInfo.email))}`)}
         >
-          <S.NavImg src={userPhoto ?? '/user.png'} alt="" />
+          <S.NavImg src={userInfo.imgFile ?? '/user.png'} alt="" />
         </S.NavImgBtn>
       </S.Nav>
       <S.Container>
@@ -99,7 +100,7 @@ function MyPage() {
           >
             <img src="" alt="" />
           </S.EditBtn>
-          <S.Img src={userPhoto ?? '/user.png'} alt="" />
+          <S.Img src={userInfo.imgFile ?? '/user.png'} alt="" />
           <S.Profile>프로필</S.Profile>
         </S.ProfileImg>
         <S.NickNameBox>
@@ -118,11 +119,17 @@ function MyPage() {
             return (
               <S.StList key={obj.id}>
                 <S.ListTitle>
-                  {obj.email}
-                  <S.ListBtn>♥</S.ListBtn>
+                  {/* 여기 바꿔야함 */}
+                  {obj.id}
+                  <S.ListBtn>♥ {obj.like}</S.ListBtn>
                 </S.ListTitle>
                 <S.ListBtnBox>
-                  <S.ListBtn onClick={() => navigate(`/editdetail/${obj.id}`)}>
+                  <S.ListBtn
+                    onClick={() =>
+                      navigate(`/detail/${encode(btoa(obj.email))}&${obj.id}`)
+                    }
+                  >
+                    {console.log(obj.id)}
                     수정
                   </S.ListBtn>
                   <S.ListBtn onClick={() => deleteWrite(obj.id)}>
