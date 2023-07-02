@@ -31,7 +31,7 @@ export const MyInfo = styled.div`
   }
 `;
 
-export const WriteBox = styled.div`
+export const InfoBox = styled.div`
   margin-top: 80px;
   & h2 {
     font-size: 28px;

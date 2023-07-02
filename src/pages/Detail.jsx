@@ -9,7 +9,7 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { InnerBox, Wrap, WriteBtn } from './Write';
-import { MyInfo, WriteBox } from '../style/DetailStyled';
+import { MyInfo, InfoBox } from '../style/DetailStyled';
 import { useNavigate, useParams } from 'react-router-dom';
 import LikeImg from '../images/Like.svg';
 import { useDispatch, useSelector } from 'react-redux';
@@ -147,7 +147,7 @@ function Detail() {
         </MyInfo>
         <StLineHr></StLineHr>
         {/* write 내용 */}
-        <WriteBox>
+        <InfoBox>
           <h2>{title}</h2>
           <dl>
             <dt>본인이 지원하고자 하는 회사란?</dt>
@@ -165,7 +165,7 @@ function Detail() {
             <dt>자신의 장단점</dt>
             <dd>{goodBad}</dd>
           </dl>
-        </WriteBox>
+        </InfoBox>
 
         {/* 수정, 삭제 버튼 */}
         <WriteBtn>
@@ -207,6 +207,7 @@ const StLikeSpan = styled.span`
     transition: all 8s;
     cursor: pointer;
     width: 30px;
+    margin-right: 15px;
     &:active {
       transform: rotateY(18560deg);
       background: magenta;

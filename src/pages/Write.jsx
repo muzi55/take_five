@@ -17,6 +17,7 @@ function Write() {
   const [goodBad, setGoodBad] = useState('');
   const [userEmail, setUserEmail] = useState('');
 
+  // 사용자 이메일 확인하기
   useEffect(() => {
     onAuthStateChanged(auth, (users) => {
       setUserEmail(users.email);
@@ -70,9 +71,9 @@ function Write() {
         return [...infos, newInfo];
       });
 
-      // Firestore에서 'todos' 컬렉션에 대한 참조 생성하기
+      // Firestore에서 'infos' 컬렉션에 대한 참조 생성하기
       const collectionRef = collection(db, 'infos');
-      // 'todos' 컬렉션에 newTodo 문서를 추가합니다.
+      // 'infos' 컬렉션에 newInfos 문서를 추가합니다.
       await addDoc(collectionRef, newInfo);
 
       alert('게시글 등록이 완료 되었습니다🎉');
