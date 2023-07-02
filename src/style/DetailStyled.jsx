@@ -10,14 +10,22 @@ export const MyInfo = styled.div`
 
   & img {
     border-radius: 100%;
-    width: 200px;
+    width: 230px;
+    height: 230px;
+    border: 1px solid black;
+    box-shadow: 3px 3px 5px 0px #00000050;
   }
   & .myInfo_text {
-    margin-left: 100px;
+    margin-left: 70px;
     display: flex;
     flex-direction: column;
     height: 200px;
     justify-content: center;
+    padding: 0px 20px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    border: 1px solid black;
+    box-shadow: 3px 3px 5px 0px #00000050;
     & dl {
       display: flex;
       align-items: center;
@@ -25,9 +33,12 @@ export const MyInfo = styled.div`
     }
   }
   & dt {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
-    width: 120px;
+    width: 130px;
+  }
+  & dd {
+    font-size: 18px;
   }
 `;
 
