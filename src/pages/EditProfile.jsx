@@ -22,21 +22,22 @@ function EditProfile() {
   let [isInputClickedIntro, setIsInputClickedIntro] = useState(false);
   let [isInputClickedSpec, setIsInputClickedSpec] = useState(false);
 
+  const imgRef = useRef();
+  const params = useParams();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.userInfo);
+  const id = useSelector((state) => state.userId);
+  // console.log(id);
+
   const [name, setName] = useState(user.name);
   const [nickName, setNickName] = useState(user.nickName);
   const [introduce, setIntroduce] = useState(user.introduce);
   const [spec, setSpec] = useState(user.spec);
   const [imgFile, setImgFile] = useState(user.imgFile);
 
-  const imgRef = useRef();
-  const params = useParams();
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.userInfo);
-  const id = useSelector((state) => state.userId);
-
   useEffect(() => {
     onAuthStateChanged(auth, (users) => {
-      console.log(users); // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
+      // console.log(users); // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
     });
     fetchUserData();
   }, []);
@@ -51,9 +52,10 @@ function EditProfile() {
     const userId = [];
 
     const userSnapshot = await getDocs(dbUsers);
+
     userSnapshot.forEach((doc) => {
       usersData.push(doc.data());
-      userId.push({ id: doc.id, email: doc.email });
+      userId.push({ id: doc.id, email: doc.data().email });
     });
     dispatch(getUserInfo(...usersData));
     dispatch(getUserId(...userId));
@@ -233,7 +235,7 @@ function EditProfile() {
                 imgFile,
               });
 
-              console.log('Document written with ID: ', updateInfoRef.id);
+              // console.log('Document written with ID: ', updateInfoRef.id);
             } catch (e) {
               console.error('Error adding document: ', e);
             }

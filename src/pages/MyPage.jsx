@@ -14,7 +14,6 @@ import { decode, encode } from 'url-safe-base64';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserInfo } from '../redux/modules/UserInfo';
 import { getUserWrite } from '../redux/modules/UserWrite';
-import { getUserPhoto } from '../redux/modules/UserPhoto';
 import * as S from '../style/MypageStyled';
 
 function MyPage() {
@@ -23,16 +22,13 @@ function MyPage() {
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.userInfo);
   const userWrite = useSelector((state) => state.userWrite);
-  const userPhoto = useSelector((state) => state.userPhoto);
-  console.log(userInfo);
+
   useEffect(() => {
     fetchUserData();
     fetchInfoData();
   }, []);
 
-  onAuthStateChanged(auth, (users) => {
-    dispatch(getUserPhoto(users.photoURL));
-  });
+  onAuthStateChanged(auth, (users) => {});
 
   const fetchUserData = async () => {
     const dbUsers = query(
@@ -43,9 +39,11 @@ function MyPage() {
     const usersData = [];
 
     const userSnapshot = await getDocs(dbUsers);
+
     userSnapshot.forEach((doc) => {
       usersData.push(doc.data());
     });
+
     dispatch(getUserInfo(...usersData));
   };
 
@@ -121,11 +119,17 @@ function MyPage() {
             return (
               <S.StList key={obj.id}>
                 <S.ListTitle>
-                  {obj.email}
-                  <S.ListBtn>♥</S.ListBtn>
+                  {/* 여기 바꿔야함 */}
+                  {obj.id}
+                  <S.ListBtn>♥ {obj.like}</S.ListBtn>
                 </S.ListTitle>
                 <S.ListBtnBox>
-                  <S.ListBtn onClick={() => navigate(`/editdetail/${obj.id}`)}>
+                  <S.ListBtn
+                    onClick={() =>
+                      navigate(`/detail/${encode(btoa(obj.email))}&${obj.id}`)
+                    }
+                  >
+                    {console.log(obj.id)}
                     수정
                   </S.ListBtn>
                   <S.ListBtn onClick={() => deleteWrite(obj.id)}>

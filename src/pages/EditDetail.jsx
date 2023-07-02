@@ -1,21 +1,25 @@
 import React, { useRef, useState } from 'react';
 import { InnerBox, WriteBox, WriteBtn } from './Write';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { db } from '../firebase';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { doc, updateDoc } from 'firebase/firestore';
+import { encode } from 'url-safe-base64';
 
 function EditDetail() {
   const userInfo = useSelector((state) => state.editDetail);
-  const { company, goodBad, grow, motive, date, email, id } = userInfo;
+  console.log(userInfo);
+  const userInfoFromMypage = useSelector((state) => state.userWrite);
+  const param = useParams();
 
+  const { company, goodBad, grow, motive, date, email, id } = userInfo;
+  // const { company, goodBad, grow, motive, date, email, id } = itemFromMypage[0];
   // input value
   const navigate = useNavigate();
   const [editCompany, setCompany] = useState(company);
   const [editMotive, setMotive] = useState(motive);
   const [editGrow, setGrow] = useState(grow);
   const [editGoodBad, setGoodBad] = useState(goodBad);
-
   //유효성 검사 돔요소 접근
   const companyRef = useRef('');
   const motiveRef = useRef('');
@@ -60,7 +64,7 @@ function EditDetail() {
         await updateDoc(infoRef, newInfo);
 
         //다시 해당 detail 페이지로 이동
-        navigate(`/detail/${email}&${id}`);
+        navigate(`/detail/${encode(btoa(email))}&${id}`);
       }
     }
   };

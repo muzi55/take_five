@@ -3,21 +3,15 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import LikeImg from '../images/Like.svg';
 import userDefault from '../images/userDefault.svg';
+import { encode } from 'url-safe-base64';
+
 const ListItem = ({ lists }) => {
   return (
     <>
       {lists
         ? lists.map((list, index) => {
-            const {
-              imgFile,
-              name,
-              email,
-              company,
-              introduce,
-              spec,
-              like,
-              id,
-            } = list;
+            const { imgFile, name, email, company, introduce, spec, like, id } =
+              list;
 
             // Hash는 다른곳에서 받아와야합니다.
             // id 말고, 다른 대체수단이 필요할 듯 싶다. 글을 쓸 시 => 새롭게 받아오는 글 고유의 id
@@ -25,7 +19,10 @@ const ListItem = ({ lists }) => {
             return (
               // key={index} 여기 수정해야합니다.
               <StListItem key={index}>
-                <Link className="link" to={`/detail/${email}&${id}`}>
+                <Link
+                  className="link"
+                  to={`/detail/${encode(btoa(email))}&${id}`}
+                >
                   <StLikeSpan>
                     <img src={LikeImg} alt="하트모양 이미지" /> : {like}
                   </StLikeSpan>

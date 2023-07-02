@@ -6,7 +6,13 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { encode } from 'url-safe-base64';
 import img from './../images/wirteBtn.svg';
-import { onAuthStateChanged } from 'firebase/auth';
+//
+//
+// 여기 밑에것들 추가해야함
+import * as S from '../style/MypageStyled';
+import { getUserInfo } from '../redux/modules/UserInfo';
+import { useSelector } from 'react-redux';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 const List = () => {
   const navigate = useNavigate();
@@ -105,20 +111,33 @@ const List = () => {
   // 현재 date값이 객체입니다. 이부분은 보안이 필요합니다.
   const newestList = [...newarr].sort((a, b) => a.date - b.date);
 
+  //
+  // 헤더 부분
+  const userInfo = useSelector((state) => state.userInfo);
+  const logout = async (event) => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      event.preventDefault();
+      await signOut(auth);
+      navigate('/');
+    }
+  };
+
   return (
     <div>
-      <button
-        onClick={() => navigate(`/mypage/${encode(btoa(authUser.email))}`)}
-      >
-        마이페이지
-      </button>
-      {/* <WritingForm>히히히</WritingForm> */}
+      <S.Nav>
+        <S.NavBtn onClick={logout}>log out</S.NavBtn>
+        <S.NavImgBtn
+          onClick={() => navigate(`/mypage/${encode(btoa(authUser.email))}`)}
+        >
+          <S.NavImg src={userInfo.imgFile ?? '/user.png'} alt="" />
+          {console.log(authUser)}
+        </S.NavImgBtn>
+      </S.Nav>
+
       <StWirteBtn action="#" onSubmit={(e) => e.preventDefault()}>
-        {/* <Link to="/write"> */}
         <button onClick={() => navigate('/write')}>
           <img src={img} alt="글쓰기 버튼 이미지" />
         </button>
-        {/* </Link> */}
       </StWirteBtn>
 
       <StListSection>
