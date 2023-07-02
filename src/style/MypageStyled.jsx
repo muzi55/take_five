@@ -46,8 +46,10 @@ export const NavBtn = styled.button`
   border-radius: 15px;
   color: #fff;
   background-color: transparent;
+  transition: scale 0.1s;
   &:hover {
     cursor: pointer;
+    scale: 1.1;
   }
 `;
 //Main 컨테이너
@@ -148,6 +150,8 @@ export const StList = styled.li`
   justify-content: space-between;
   padding: 10px;
   margin-top: 10px;
+  border: 1px solid #fff;
+  box-shadow: 2px 2px 5px #00000054;
 `;
 
 export const ListTitle = styled(Link)`
@@ -181,7 +185,9 @@ export const ListBtn = styled.button`
   height: 30px;
   background-color: transparent;
   color: #fff;
+  transition: scale 0.1s;
   &:hover {
     cursor: pointer;
+    scale: 1.1;
   }
 `;
