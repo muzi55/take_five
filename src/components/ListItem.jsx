@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import LikeImg from '../images/Like.svg';
 import userDefault from '../images/userDefault.svg';
-import './../style/SkeletonUi.css';
 import heart from '../images/heart_.svg';
 import { encode } from 'url-safe-base64';
 import loading from '../images/loading.gif';
@@ -41,7 +40,7 @@ const ListItem = ({ lists }) => {
         // 느리고 안정된 애니메이션을 사용하는것이 로딩 시간을 더 짧게 느끼게끔 합니다.
         lists.length >= 1 ? (
           lists.map((list, index) => {
-            const { imgFile, name, email, company, introduce, spec, like, id } =
+            const { imgFile, name, email, company, spec, like, id, title } =
               list;
 
             return (
@@ -70,9 +69,9 @@ const ListItem = ({ lists }) => {
                         alt="하트모양 이미지"
                       />
                     </StLikeSpan>
-                    <StHeading3>{name}</StHeading3>
-                    <StListTextP>{company}</StListTextP>
-                    <StListTextP opacity="0.8">{introduce}</StListTextP>
+                    <StHeading3>{title}</StHeading3>
+                    <StListTextP>{name}</StListTextP>
+                    <StListTextP opacity="0.8">{company}</StListTextP>
                     <StListTextP opacity="0.7" className="list-text-hash">
                       {spec}
                     </StListTextP>
@@ -183,9 +182,13 @@ const StListItem = styled.li`
   }
 `;
 const StHeading3 = styled.h3`
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
   margin-bottom: 10px;
+  width: 200px;
+  height: 35px;
+  overflow: hidden;
+  line-height: 35px;
 `;
 
 const SkeletonUi = styled.div`

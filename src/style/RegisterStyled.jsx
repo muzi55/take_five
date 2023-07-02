@@ -1,12 +1,7 @@
-import styled, { createGlobalStyle } from 'styled-components';
-import left from '../images/left.png'
-import right from '../images/right.png'
+import styled from 'styled-components';
+import left from '../images/left.png';
+import right from '../images/right.png';
 
-export const GlobalStyle = createGlobalStyle` 
-  html{
-    background-color: #366671;
-  }
-  `;
 export const Grid = styled.span`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -19,7 +14,6 @@ export const Login = styled.div`
   display: grid;
   grid-column: 2/3;
   grid-row: 2/3;
-  /* border:2px solid black; */
   border-radius: 4px;
   background-color: white;
   padding: 10px;
@@ -49,10 +43,11 @@ export const Input = styled.input`
   &::placeholder {
     font-weight: bold;
   }
-  &:focus{
-    outline:none;
+  &:focus {
+    outline: none;
   }
 `;
+// 인풋창 입력시 인풋창이 움직이지 않도록 조정했습니다.
 export const InputMessage = styled.div`
   font-weight: bold;
   font-size: 12px;
@@ -83,19 +78,18 @@ export const LoginButton = styled.button`
     background-color: #4a666d;
   }
 `;
-
-export const Left =styled.img.attrs({src:`${left}`})`
-  z-index:1;
+// 사진이 위로 오도록 z-index를 이용했습니다.
+export const Left = styled.img.attrs({ src: `${left}` })`
+  z-index: 1;
   grid-column: 2/3;
   grid-row: 1/2;
-  margin:83px 260px 0px 0px;
-  width:125px;
-  
-`
-export const Right =styled.img.attrs({src:`${right}`})`
-  z-index:1;
+  margin: 83px 260px 0px 0px;
+  width: 125px;
+`;
+export const Right = styled.img.attrs({ src: `${right}` })`
+  z-index: 1;
   grid-column: 2/3;
   grid-row: 3/3;
-  margin:-72px -270px 0px 0px;
-  width:125px;
-`
+  margin: -72px -270px 0px 0px;
+  width: 125px;
+`;

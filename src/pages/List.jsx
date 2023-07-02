@@ -6,11 +6,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { encode } from 'url-safe-base64';
 import img from './../images/wirteBtn.svg';
-//
-//
-//
 import * as S from '../style/MypageStyled';
-import { getUserInfo } from '../redux/modules/UserInfo';
 import { useSelector } from 'react-redux';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 
@@ -105,12 +101,11 @@ const List = () => {
 
   // 최신순으로 정렬되어있는 함수입니다.
   // 현재 date값이 객체입니다. 이부분은 보안이 필요합니다.
-  const newestList = [...newarr].sort((a, b) => a.date - b.date);
+  const newestList = [...newarr].sort((a, b) => b.date - a.date);
 
   //
   // 헤더 부분
   // 로그인 버튼 클릭시 email값을 리덕스로 받아옵니다.
-  const [profileImg, setProfileImg] = useState(null);
   const userEmail = useSelector((state) => state.loginsubmit);
   onAuthStateChanged(auth, (users) => {});
   useEffect(() => {
@@ -128,10 +123,8 @@ const List = () => {
     userSnapshot.forEach((doc) => {
       usersData.push(doc.data());
     });
-    setProfileImg(usersData[0].imgFile);
   };
 
-  const userInfo = useSelector((state) => state.userInfo);
   const logout = async (event) => {
     if (confirm('로그아웃 하시겠습니까?')) {
       event.preventDefault();
@@ -140,25 +133,15 @@ const List = () => {
     }
   };
 
-  const comparisonUserImg = userInfo.imgFile
-    ? userInfo.imgFile
-    : profileImg
-    ? profileImg
-    : '/user.png';
-  console.log(comparisonUserImg);
-  console.log(userInfo);
   return (
     <div>
       <S.Nav>
         <S.NavBtn onClick={logout}>log out</S.NavBtn>
-        <S.NavImgBtn
+        <S.NavBtn
           onClick={() => navigate(`/mypage/${encode(btoa(authUser.email))}`)}
         >
-          <S.NavImg src={comparisonUserImg} alt="" />
-
-          {/* {console.log(profileImg)} */}
-          {/* {console.log(userInfo)} */}
-        </S.NavImgBtn>
+          Profile
+        </S.NavBtn>
       </S.Nav>
 
       <StWirteBtn action="#" onSubmit={(e) => e.preventDefault()}>
@@ -175,7 +158,6 @@ const List = () => {
             {/* 최신순 인기순 정렬 입니다. */}
             {sortItems.map((item, index) => {
               return (
-                // <li key={item} onClick={() => onSetState(item)}>
                 <li
                   key={index}
                   onClick={() => {
@@ -183,7 +165,6 @@ const List = () => {
                     onClickListUl();
                   }}
                 >
-                  {/* <li key={item} onClick={() => dispatch()}> */}
                   <span>{item}</span>
                 </li>
               );
