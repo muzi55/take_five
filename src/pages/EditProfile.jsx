@@ -3,7 +3,6 @@ import './../style/EditProfile.css';
 import { auth, db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import { doc, updateDoc } from 'firebase/firestore';
-import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 // import { onAuthStateChanged, updateProfile } from 'firebase/auth';
 // import { auth, storage } from '../firebase';
@@ -214,11 +213,6 @@ function EditProfile() {
       <div className="buttonbox">
         <button
           className="finishbtn"
-<<<<<<< HEAD
-          onClick={() => {
-            navigate('/list');
-            console.log('버튼이 눌렸어 !!');
-=======
           onClick={async () => {
             try {
               const docRef = await addDoc(collection(db, 'users'), {
@@ -234,7 +228,6 @@ function EditProfile() {
             }
             alert('프로필이 저장되었습니다.🎉');
             navigate('/list');
->>>>>>> dev
           }}
         >
           저장

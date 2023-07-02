@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useSelector, useDispatch } from 'react-redux';
+import Sidebar from '../components/Sidebar';
 
 function Home() {
   const email = useSelector((state) => {
@@ -31,94 +32,70 @@ function Home() {
   return (
     <H.Grid>
       <H.GlobalStyle />
-      <H.MainBox>
-        <div>
-          <div>
-            {/* 사진으로 바꾸거나 고민해보기기 */}
-            <H.TitleBig>자기 P</H.TitleBig>
-            <H.TitleSmall>ublic </H.TitleSmall>
-            <H.TitleBig>R</H.TitleBig>
-            <H.TitleSmall>elations </H.TitleSmall>
-            <H.TitleBig>actic</H.TitleBig>
-          </div>
-          <br />
-          <br />
-          <div>
-            <div>자기 pr을 연습해보세요!</div>
-            <br />
-            <br />
+      <Sidebar width={400}>
+        <H.Login>
+          <H.Form>
+            <H.LoginName>LOGIN</H.LoginName>
             <div>
-              자기 자신을 스스로 다른 사람들에게 알리는 <br /> <br />
-              자기pr을 연습하기 위한 페이지입니다.
+              <div>
+                <H.ID>아이디</H.ID>
+              </div>
+              <H.Input
+                type="email"
+                placeholder="이메일을 입력해주세요"
+                value={email}
+                name="email"
+                onChange={onChange}
+              />
+
+              <br />
+              <div>
+                <H.PW>비밀번호</H.PW>
+              </div>
+              <H.Input
+                type="password"
+                placeholder="비밀번호를 입력해주세요"
+                value={password}
+                name="password"
+                onChange={onChange}
+              />
             </div>
-            <br />
-            <br />
             <div>
-              자신의 강점을 알고 소개하는 방법을 sns방식으로 터득할 수 있습니다.
-            </div>
-            <br />
-            <div>한 단계 발전하기 위해 타인의 pr도 살펴보세요.</div>
-          </div>
-        </div>
-      </H.MainBox>
-
-      {/* //메인페이지의 로그인창입니다. */}
-      <H.Login>
-        <H.Form>
-          Login
-          <div>
-            <H.Input
-              type="email"
-              placeholder="이메일"
-              value={email}
-              name="email"
-              onChange={onChange}
-            />
-
-            <br />
-            <H.Input
-              type="password"
-              placeholder="비밀번호"
-              value={password}
-              name="password"
-              onChange={onChange}
-            />
-          </div>
-          <div>
-            <H.SignButton
-              type="button"
-              onClick={() => {
-                navigate('/register');
-              }}
-            >
-              회원가입
-            </H.SignButton>
-            <H.LoginButton
-              type="submit"
-              onClick={async (event) => {
-                event.preventDefault();
-                if (!email || !password) {
-                  alert('빈칸을 채워주세요!');
-                } else {
-                  try {
-                    const userCredential = await signInWithEmailAndPassword(
-                      auth,
-                      email,
-                      password
-                    );
-                    navigate('/list');
-                  } catch (error) {
-                    console.error(error);
+              <H.SignButton
+                type="button"
+                onClick={() => {
+                  navigate('/register');
+                }}
+              >
+                회원가입
+              </H.SignButton>
+              <H.LoginButton
+                type="submit"
+                onClick={async (event) => {
+                  event.preventDefault();
+                  if (!email || !password) {
+                    alert('빈칸을 채워주세요!');
+                  } else {
+                    try {
+                      const userCredential = await signInWithEmailAndPassword(
+                        auth,
+                        email,
+                        password
+                      );
+                      navigate('/list');
+                    } catch (error) {
+                      console.error(error);
+                    }
                   }
-                }
-              }}
-            >
-              {' '}
-              로그인
-            </H.LoginButton>
-          </div>
-        </H.Form>
-      </H.Login>
+                }}
+              >
+                {' '}
+                로그인
+              </H.LoginButton>
+            </div>
+          </H.Form>
+        </H.Login>
+      </Sidebar>
     </H.Grid>
   );
 }
