@@ -8,7 +8,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import { InnerBox, WriteBtn } from './Write';
+import { InnerBox, Wrap, WriteBtn } from './Write';
 import { MyInfo, WriteBox } from '../style/DetailStyled';
 import { useNavigate, useParams } from 'react-router-dom';
 import LikeImg from '../images/Like.svg';
@@ -84,6 +84,7 @@ function Detail() {
     grow,
     motive,
     like,
+    title,
 
     introduce,
     name,
@@ -106,6 +107,7 @@ function Detail() {
       payload: userInfo,
     });
   };
+
   // 업데이트 부분
   const [render, setRender] = useState(like);
   const updateInfo = async (event) => {
@@ -117,75 +119,78 @@ function Detail() {
   };
 
   return (
-    <InnerBox>
-      {/* my page 내용 */}
-      <MyInfo>
-        {/* 추가부분 라이크 박스 */}
-        <StLikeSpan>
-          <img onClick={updateInfo} src={LikeImg} alt="하트모양 이미지" /> :
-          {render}
-          {like}
-        </StLikeSpan>
-        <img src={userPhoto ?? '/user.png'} alt="프로필 사진" />
-        <div className="myInfo_text">
+    <Wrap>
+      <InnerBox>
+        {/* my page 내용 */}
+        <MyInfo>
+          {/* 추가부분 라이크 박스 */}
+          <img src={userPhoto ?? '/user.png'} alt="프로필 사진" />
+          <div className="myInfo_text">
+            <StLikeSpan>
+              <img onClick={updateInfo} src={LikeImg} alt="하트모양 이미지" />
+              {render}
+              {like}
+            </StLikeSpan>
+            <dl>
+              <dt>Name</dt>
+              <dd>{name}</dd>
+            </dl>
+            <dl>
+              <dt>spec</dt>
+              <dd>{spec}</dd>
+            </dl>
+            <dl>
+              <dt>Introduce</dt>
+              <dd>{introduce}</dd>
+            </dl>
+          </div>
+        </MyInfo>
+        <StLineHr></StLineHr>
+        {/* write 내용 */}
+        <WriteBox>
+          <h2>{title}</h2>
           <dl>
-            <dt>Name</dt>
-            <dd>{name}</dd>
+            <dt>본인이 지원하고자 하는 회사란?</dt>
+            <dd>{company}</dd>
           </dl>
           <dl>
-            <dt>spec</dt>
-            <dd>{spec}</dd>
+            <dt>지원하게 된 동기?</dt>
+            <dd>{motive}</dd>
           </dl>
           <dl>
-            <dt>Introduce</dt>
-            <dd>{introduce}</dd>
+            <dt>자신의 성장과정</dt>
+            <dd>{grow}</dd>
           </dl>
-        </div>
-      </MyInfo>
+          <dl>
+            <dt>자신의 장단점</dt>
+            <dd>{goodBad}</dd>
+          </dl>
+        </WriteBox>
 
-      {/* write 내용 */}
-      <WriteBox>
-        <dl>
-          <dt>본인이 지원하고자 하는 회사란?</dt>
-          <dd>{company}</dd>
-        </dl>
-        <dl>
-          <dt>지원하게 된 동기?</dt>
-          <dd>{motive}</dd>
-        </dl>
-        <dl>
-          <dt>자신의 성장과정</dt>
-          <dd>{grow}</dd>
-        </dl>
-        <dl>
-          <dt>자신의 장단점</dt>
-          <dd>{goodBad}</dd>
-        </dl>
-      </WriteBox>
-
-      {/* 수정, 삭제 버튼 */}
-      <WriteBtn>
-        <button
-          onClick={() => {
-            editDetail();
-            navigate(`/editdetail/${userInfo.id}`);
-          }}
-          ref={editIdRef}
-        >
-          수정
-        </button>
-        <button onClick={deleteInfo} ref={deleteIdRef}>
-          삭제
-        </button>
-        <button
-          onClick={() => {
-            navigate('/list');
-          }}
-        >
-          이전페이지
-        </button>
-      </WriteBtn>
-    </InnerBox>
+        {/* 수정, 삭제 버튼 */}
+        <WriteBtn>
+          <button
+            onClick={() => {
+              editDetail();
+              navigate(`/editdetail/${userInfo.id}`);
+            }}
+            ref={editIdRef}
+          >
+            수정
+          </button>
+          <button onClick={deleteInfo} ref={deleteIdRef}>
+            삭제
+          </button>
+          <button
+            onClick={() => {
+              navigate('/list');
+            }}
+          >
+            이전페이지
+          </button>
+        </WriteBtn>
+      </InnerBox>
+    </Wrap>
   );
 }
 
@@ -193,18 +198,23 @@ export default Detail;
 
 const StLikeSpan = styled.span`
   display: flex;
+  flex-direction: row;
   align-items: center;
-  position: absolute;
-  top: 2.5rem;
-  right: 4rem;
-  font-size: 1.4rem;
+  width: 100%;
+  margin-bottom: 20px;
   & img {
     background: none;
     transition: all 8s;
     cursor: pointer;
+    width: 30px;
     &:active {
       transform: rotateY(18560deg);
       background: magenta;
     }
   }
+`;
+
+const StLineHr = styled.hr`
+  margin-top: 80px;
+  border: 1px solid #214047;
 `;
