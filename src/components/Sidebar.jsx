@@ -56,8 +56,10 @@ const Sidebar = ({ width = 300, children }) => {
         </S.button>
         <S.button onClick={() => toggleMenu()}>
           {isOpen ? (
-            <span style={{ paddingLeft: '40px', color: '#366671' }}> X</span>
+            // <span style={{ paddingLeft: '40px', color: '#366671' }}> X</span>
+            <span style={{ color: '#fff', fontSize: '30px' }}> &gt;&gt;</span>
           ) : (
+            // <img src={rightBtn} alt="닫기버튼" />
             <span>Login</span>
           )}
         </S.button>
