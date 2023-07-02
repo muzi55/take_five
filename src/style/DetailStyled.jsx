@@ -6,56 +6,61 @@ export const MyInfo = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  padding-top: 80px;
 
   & img {
-    background-color: darkseagreen;
     border-radius: 100%;
+    width: 230px;
+    height: 230px;
+    border: 1px solid black;
+    box-shadow: 3px 3px 5px 0px #00000050;
   }
   & .myInfo_text {
-    margin-left: 100px;
+    margin-left: 70px;
+    display: flex;
+    flex-direction: column;
+    height: 200px;
+    justify-content: center;
+    padding: 0px 20px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    border: 1px solid black;
+    box-shadow: 3px 3px 5px 0px #00000050;
     & dl {
-      width: 500px;
-      height: 40px;
       display: flex;
-      background-color: #dfe0dc;
-      padding: 0 20px;
       align-items: center;
-      margin: 30px 0;
+      margin: 10px 0;
     }
-    & dt {
-      font-size: 18px;
-      font-weight: bold;
-      width: 80px;
-    }
-
-    & dl:nth-child(3) {
-      height: 130px;
-      display: flex;
-      align-items: normal;
-      padding: 20px;
-      flex-direction: column;
-    }
-    & dl:nth-child(3) dt {
-      font-size: 18px;
-      font-weight: bold;
-      width: 150px;
-    }
-    & dl:nth-child(3) dd {
-      margin-top: 20px;
-    }
+  }
+  & dt {
+    font-size: 20px;
+    font-weight: bold;
+    width: 130px;
+  }
+  & dd {
+    font-size: 18px;
   }
 `;
 
-export const WriteBox = styled.div`
-  margin-top: 120px;
+export const InfoBox = styled.div`
+  margin-top: 80px;
+  & h2 {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 80px;
+  }
   & dl {
-    height: 185px;
     padding: 20px;
-    background-color: #dfe0dc;
+    height: 185px;
     margin: 30px 0;
+    background-color: #fff;
+    border: 1px solid black;
+    border-radius: 5px;
+    box-shadow: 3px 3px 5px 0px #00000050;
 
     & dt {
-      font-size: 18px;
+      font-size: 24px;
       font-weight: bold;
     }
 
