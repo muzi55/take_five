@@ -28,12 +28,14 @@ function EditProfile() {
   const user = useSelector((state) => state.userInfo);
   const id = useSelector((state) => state.userId);
 
+  // 프로필 정보 변수들
   const [name, setName] = useState(user.name);
   const [nickName, setNickName] = useState(user.nickName);
   const [introduce, setIntroduce] = useState(user.introduce);
   const [spec, setSpec] = useState(user.spec);
   const [imgFile, setImgFile] = useState(user.imgFile);
 
+  // 페이지 렌더링시 fetchUserData 실행
   useEffect(() => {
     onAuthStateChanged(auth, (users) => {
       console.log(users); // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
@@ -41,6 +43,7 @@ function EditProfile() {
     fetchUserData();
   }, []);
 
+  // firebase에서 users 컬렉션에서 현재 로그인 중인 계정의 email과 같은 문서를 쿼리해서 해당 계정의 데이터와 id 읽어오기
   const fetchUserData = async () => {
     const dbUsers = query(
       collection(db, 'users'),
@@ -49,7 +52,6 @@ function EditProfile() {
 
     const usersData = [];
     const userId = [];
-
     const userSnapshot = await getDocs(dbUsers);
 
     userSnapshot.forEach((doc) => {
@@ -60,6 +62,7 @@ function EditProfile() {
     dispatch(getUserId(...userId));
   };
 
+  // input 창에 값 입력시 변수값 저장하는 이벤트들
   const saveName = (event) => {
     setName(event.target.value);
   };
@@ -76,15 +79,17 @@ function EditProfile() {
     setSpec(event.target.value);
   };
 
-  // 이미지 업로드 input의 onChange
+  // 이미지 업로드 input의 onChange 이벤트 함수
   const saveImgFile = async () => {
     const file = imgRef.current.files[0];
-    const reader = new FileReader();
+    const reader = new FileReader(); // FileReader를 이용해 이미지 로드
     reader.readAsDataURL(file);
     reader.onloadend = () => {
       setImgFile(reader.result);
     };
   };
+
+  // 이미지 삭제 button의 onClick 이벤트함수
   const deleteImg = () => {
     setImgFile('');
   };
@@ -225,6 +230,7 @@ function EditProfile() {
           className="finishbtn"
           onClick={async () => {
             try {
+              // 5개의 값을 firebase의 users 컬렉션에 현재 로그인 계정의 데이터를 업데이트
               const updateInfoRef = doc(db, 'users', id.id);
               await updateDoc(updateInfoRef, {
                 name,
@@ -244,7 +250,6 @@ function EditProfile() {
         >
           저장
         </button>
-        {/* 일단 보류 */}
         <button
           className="cancelbtn"
           onClick={() => {

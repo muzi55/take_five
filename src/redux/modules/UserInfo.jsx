@@ -12,7 +12,6 @@ const initialState = [];
 const userInfo = (state = initialState, action) => {
   switch (action.type) {
     case GET_USER_INFO:
-      // console.log(action);
       return action.payload;
     default:
       return state;

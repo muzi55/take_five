@@ -13,7 +13,6 @@ const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route path="/" element={<List />} /> */}
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/write" element={<Write />} />

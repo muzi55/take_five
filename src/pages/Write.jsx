@@ -17,7 +17,7 @@ function Write() {
   const [goodBad, setGoodBad] = useState('');
   const [userEmail, setUserEmail] = useState('');
 
-  // 사용자 이메일 확인하기
+  // 사용자 이메일 가져오기
   useEffect(() => {
     onAuthStateChanged(auth, (users) => {
       setUserEmail(users.email);
@@ -35,6 +35,7 @@ function Write() {
   const addInfo = async (event) => {
     event.preventDefault();
 
+    // 새로운 객체 생성
     const newInfo = {
       email: userEmail,
       date: new Date(),
@@ -43,10 +44,10 @@ function Write() {
       motive,
       grow,
       goodBad,
-      like: 0,
+      like: 0, // like는 초깃값을 넣어주지 않으면 NAN으로 뜨기 때문에 숫자형 0을 넣어줘야함.
     };
 
-    // 유효성 검사
+    // 유효성 검사, 빈값으로 저장하려고 할시 alert 창 띄움.
     if (title === '') {
       alert('제목을 입력해주세요.');
       titleRef.current.focus();
@@ -168,6 +169,7 @@ export const InnerBox = styled.div`
   width: 1020px;
   margin: 0px auto;
 `;
+
 export const WriteBox = styled.form`
   overflow: hidden;
   padding-top: 50px;
@@ -220,6 +222,15 @@ export const WriteBtn = styled.div`
   margin-top: 60px;
   text-align: center;
   padding-bottom: 80px;
+  & .deleteBtn {
+    display: none;
+  }
+  & .editBtn {
+    display: none;
+  }
+  & .prevBtn {
+    display: none;
+  }
   & .deleteBtn:hover {
     background-color: #e7b7b7;
   }

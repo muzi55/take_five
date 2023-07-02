@@ -12,7 +12,7 @@ export const MyInfo = styled.div`
     border-radius: 100%;
     width: 230px;
     height: 230px;
-    border: 1px solid black;
+    border: 6px solid #fff;
     box-shadow: 3px 3px 5px 0px #00000050;
   }
   & .myInfo_text {
@@ -45,10 +45,16 @@ export const MyInfo = styled.div`
 export const InfoBox = styled.div`
   margin-top: 80px;
   & h2 {
+    padding: 20px;
+    margin: 30px 0;
+    background-color: #fff;
+    border: 1px solid black;
+    border-radius: 5px;
+    box-shadow: 3px 3px 5px 0px #00000050;
     font-size: 28px;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 80px;
+    line-height: 40px;
   }
   & dl {
     padding: 20px;

@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { InnerBox, Wrap, WriteBox, WriteBtn } from './Write';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { doc, updateDoc } from 'firebase/firestore';
 import { encode } from 'url-safe-base64';
 
@@ -10,8 +10,7 @@ function EditDetail() {
   const userInfo = useSelector((state) => state.editDetail);
   const { title, company, goodBad, grow, motive, date, email, id } = userInfo;
 
-  // const { company, goodBad, grow, motive, date, email, id } = itemFromMypage[0];
-  // input value
+  // input value(초깃값으로 이전 값 넣어줌)
   const navigate = useNavigate();
   const [editTitle, setEditTitle] = useState(title);
   const [editCompany, setEditCompany] = useState(company);
@@ -26,6 +25,7 @@ function EditDetail() {
   const growRef = useRef('');
   const goodBadRef = useRef('');
 
+  // 새로운 객체 생성
   const newInfo = {
     email,
     date,
@@ -65,7 +65,6 @@ function EditDetail() {
       // firestore infos 데이터 수정
       if (confirm('수정하시겠습니까?')) {
         const infoRef = doc(db, 'infos', userInfo.id);
-        console.log(infoRef);
         await updateDoc(infoRef, newInfo);
 
         //다시 해당 detail 페이지로 이동
@@ -125,11 +124,8 @@ function EditDetail() {
           </label>
         </WriteBox>
         <WriteBtn>
-          {/* navigate(-1)로 이전페이지 구현하고 싶었으나 오류나서 일단 해당 detail 페이지로 이동 */}
+          {/* navigate 이전페이지로 이동 */}
           <button onClick={() => navigate(-1)}>이전</button>
-          {/* <button onClick={() => navigate(`/detail/${email}&${id}`)}>
-            이전
-          </button> */}
           <button onClick={editInfo}>저장</button>
         </WriteBtn>
       </InnerBox>
