@@ -213,10 +213,10 @@ const StListSection = styled.section`
   box-sizing: border-box;
   padding: 1rem 1.875rem 1.25rem;
   & h2 {
-    position:absolute;
-    top:-9999px;
-    left:-9999px;
-    text-indent : -9999px
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    text-indent: -9999px;
     font-size: 1.4rem;
   }
 `;
@@ -225,7 +225,6 @@ const StListGridBox = styled.ul`
   position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  /* grid-template-rows: repeat(3, 1fr); */
 `;
 
 const StListbox = styled.div`
