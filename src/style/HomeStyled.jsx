@@ -95,7 +95,6 @@ export const LoginButton = styled.button`
 `;
 // SIDEBAR
 export const sidebar = styled.div`
-  background-color: #366671;
   position: fixed;
   top: 0;
   bottom: 0;
