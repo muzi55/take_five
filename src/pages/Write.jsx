@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../App.css';
 import { styled } from 'styled-components';
-import { addDoc, collection, doc, getDocs, query } from 'firebase/firestore';
+import { addDoc, collection } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // 스타일드 컴포넌트
 // 💚 추후에 스타일드 컴포넌트 리팩토링할 것
@@ -63,7 +64,7 @@ export const WriteBox = styled.form`
 `;
 
 //버튼 스타일 부분
-export const WriteBtn = styled.form`
+export const WriteBtn = styled.div`
   margin-top: 60px;
   text-align: center;
   & button {
@@ -87,8 +88,13 @@ function Write() {
   const [motive, setMotive] = useState('');
   const [grow, setGrow] = useState('');
   const [goodBad, setGoodBad] = useState('');
+  const [userEmail, setUserEmail] = useState('');
 
-  const userEmail = auth.currentUser.email;
+  useEffect(() => {
+    onAuthStateChanged(auth, (users) => {
+      setUserEmail(users.email);
+    });
+  }, []);
 
   //유효성 검사 돔요소 접근
   const companyRef = useRef('');
@@ -107,6 +113,7 @@ function Write() {
       motive,
       grow,
       goodBad,
+      like: 0,
     };
 
     // 유효성 검사
@@ -148,6 +155,7 @@ function Write() {
       navigate('/list');
     }
   };
+
   return (
     <InnerBox>
       <WriteBox>
@@ -189,13 +197,16 @@ function Write() {
         </label>
         <WriteBtn>
           <button
+            type="button"
             onClick={function () {
               navigate('/list');
             }}
           >
             이전
           </button>
-          <button onClick={addInfo}>저장</button>
+          <button type="submit" onClick={addInfo}>
+            저장
+          </button>
         </WriteBtn>
       </WriteBox>
     </InnerBox>

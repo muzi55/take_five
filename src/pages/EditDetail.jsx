@@ -1,21 +1,25 @@
 import React, { useRef, useState } from 'react';
 import { InnerBox, WriteBox, WriteBtn } from './Write';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { db } from '../firebase';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { doc, updateDoc } from 'firebase/firestore';
+import { encode } from 'url-safe-base64';
 
 function EditDetail() {
   const userInfo = useSelector((state) => state.editDetail);
-  const { company, goodBad, grow, motive, date, email, id } = userInfo;
+  console.log(userInfo);
+  const userInfoFromMypage = useSelector((state) => state.userWrite);
+  const param = useParams();
 
+  const { company, goodBad, grow, motive, date, email, id } = userInfo;
+  // const { company, goodBad, grow, motive, date, email, id } = itemFromMypage[0];
   // input value
   const navigate = useNavigate();
   const [editCompany, setCompany] = useState(company);
   const [editMotive, setMotive] = useState(motive);
   const [editGrow, setGrow] = useState(grow);
   const [editGoodBad, setGoodBad] = useState(goodBad);
-
   //유효성 검사 돔요소 접근
   const companyRef = useRef('');
   const motiveRef = useRef('');
@@ -56,10 +60,11 @@ function EditDetail() {
       // firestore infos 데이터 수정
       if (confirm('수정하시겠습니까?')) {
         const infoRef = doc(db, 'infos', userInfo.id);
+        console.log(infoRef);
         await updateDoc(infoRef, newInfo);
 
         //다시 해당 detail 페이지로 이동
-        navigate(`/detail/${email}&${id}`);
+        navigate(`/detail/${encode(btoa(email))}&${id}`);
       }
     }
   };
@@ -103,16 +108,15 @@ function EditDetail() {
             ref={goodBadRef}
           />
         </label>
-
-        <WriteBtn>
-          {/* navigate(-1)로 이전페이지 구현하고 싶었으나 오류나서 일단 해당 detail 페이지로 이동 */}
-          {/* <button onClick={() => navigate(-1)}>이전</button> */}
-          <button onClick={() => navigate(`/detail/${email}&${id}`)}>
-            이전
-          </button>
-          <button onClick={editInfo}>저장</button>
-        </WriteBtn>
       </WriteBox>
+      <WriteBtn>
+        {/* navigate(-1)로 이전페이지 구현하고 싶었으나 오류나서 일단 해당 detail 페이지로 이동 */}
+        <button onClick={() => navigate(-1)}>이전</button>
+        {/* <button onClick={() => navigate(`/detail/${email}&${id}`)}>
+            이전
+          </button> */}
+        <button onClick={editInfo}>저장</button>
+      </WriteBtn>
     </InnerBox>
   );
 }

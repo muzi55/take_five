@@ -5,6 +5,8 @@ import LikeImg from '../images/Like.svg';
 import userDefault from '../images/userDefault.svg';
 import './../style/SkeletonUi.css';
 import heart from '../images/heart_.svg';
+import { encode } from 'url-safe-base64';
+
 const ListItem = ({ lists }) => {
   const imgLike = 'https://i.postimg.cc/59qL9m7h/jordy4.webp';
   return (
@@ -44,7 +46,13 @@ const ListItem = ({ lists }) => {
             return (
               // key={index} 여기 수정해야합니다.
               <StListItem key={index}>
-                <Link className="link" to={`/detail/${email}&${id}`}>
+                <Link
+                  className="link"
+                  to={`/detail/${encode(btoa(email))}&${id}`}
+                >
+                  <StLikeSpan>
+                    <img src={LikeImg} alt="하트모양 이미지" /> : {like}
+                  </StLikeSpan>
                   <StListImgBox className="list-img-box">
                     {/* firestore에 프로필 이미지가 있다면? 
                     그 이미지를 사용하고, 
