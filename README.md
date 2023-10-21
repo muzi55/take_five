@@ -175,18 +175,3 @@ Feat: singin,login in mainpage, logout in subpage 추가
 아직 기능만 추가되었고 CSS 적용 전 입니다
 ```
 
-## 우리 팀 GIT-FLOW
-
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b4f59f50-d96c-44e6-ba4b-fee267db7f08/Untitled.png)
-
-각자의 기능을 맡은 feat/기능의 이름으로 branch들을 로컬환경에서 구성
-
-→ 팀 git repository에 각자의 branch로 commit, push
-
-→ 이후 기능에서 추가적으로 생성된 기능이 있다면 local branch에서 새롭게 branch 생성 후 완료되면 동일하게 commit, push
-
-→ 각 기능들이 완성되면 dev branch에서 합치고 이상없을 시 main으로 이동
-
-** dev, master/main branch엔 오로지 PR, confirm 후 merge 순서로 진행(절대로 직접적인 접근 금지) **
-
-** dev에서 합친 내용에 수정 사항 및 오류 사항이 생길 시 fix branch에서 해결 후 다시 push **
