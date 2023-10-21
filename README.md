@@ -10,14 +10,14 @@
 
 📌 김슬기
 
-![제목 없음4545.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8ef914be-aec6-465e-a930-804aedfca658/%EC%A0%9C%EB%AA%A9_%EC%97%86%EC%9D%8C4545.png)
+
 
 - [seul-bean (seul-bean) - velog](https://velog.io/@seul-bean)
 - [kimseulgi-creator (seulgi) (github.com)](https://github.com/kimseulgi-creator)
 
 📌 백예나
 
-![제목 없음4545.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c0ca4c5d-ca66-4bca-831e-be540d34420b/%EC%A0%9C%EB%AA%A9_%EC%97%86%EC%9D%8C4545.png)
+
 
 - 담당: 미정
 - jntantmsemt@naver.com
@@ -26,7 +26,7 @@
 
 📌 김성훈
 
-![KakaoTalk_20191127_193133718_03.jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/cc96db25-4a6c-414e-9a4f-e7043a3d63ce/KakaoTalk_20191127_193133718_03.jpg)
+
 
 - 뭐라도 담당하는중
 - rmdkak99786@naver.com
@@ -35,7 +35,7 @@
 
 📌 박진희
 
-![제목 없음4545.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c0ca4c5d-ca66-4bca-831e-be540d34420b/%EC%A0%9C%EB%AA%A9_%EC%97%86%EC%9D%8C4545.png)
+
 
 - 담당
 - jhp202@naver.com
@@ -108,8 +108,6 @@ Feat: singin,login in mainpage, logout in subpage 추가
 ```
 
 ## 우리 팀 GIT-FLOW
-
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b4f59f50-d96c-44e6-ba4b-fee267db7f08/Untitled.png)
 
 각자의 기능을 맡은 feat/기능의 이름으로 branch들을 로컬환경에서 구성
 
