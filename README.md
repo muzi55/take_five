@@ -72,6 +72,7 @@
 
 ## 배포주소/와이어프레임/노션
 
+
 [배포주소](https://take-five-nu.vercel.app/)<br />
 [피그마](https://www.figma.com/file/wSCTcHfKxT2cn55fpiYT2A/Untitled?type=design&node-id=0%3A1&mode=design&t=YqQ3c2tqTji6Ircl-1/)<br />
 [노션](https://www.notion.so/take-five-4c21411bacab425681030199b2efcbe4/)
@@ -159,3 +160,4 @@ Feat: singin,login in mainpage, logout in subpage 추가
 ## 시연 영상
 
 ![talent_connect2](https://github.com/kimseulgi-creator/TodoList/assets/78592995/2f2c6b59-35e5-4539-9d93-ab62c2bd2b3e)
+
